@@ -1,0 +1,2719 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Khám Phá Vũ Trụ - SPA (Full Height Headers)</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        /* --- Original Base Styles --- */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-padding-top: 4.5rem; scroll-behavior: smooth; }
+        body { font-family: 'Inter', sans-serif; background-color: #000; color: #fff; line-height: 1.6; overflow-x: hidden; }
+
+        /* Scrollbar */
+        * { scrollbar-width: thin; scrollbar-color: #6366f1 #111827; }
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #111827; }
+        ::-webkit-scrollbar-thumb { background-color: #6366f1; border-radius: 10px; border: 2px solid #111827; }
+        ::-webkit-scrollbar-thumb:hover { background-color: #4f46e5; }
+
+        .container {
+            width: 100%;
+            max-width: 1100px;
+            margin-left: auto;
+            margin-right: auto;
+            padding-left: 1rem;
+            padding-right: 1rem;
+        }
+        @media (min-width: 1280px) {
+          .container { max-width: 1200px; }
+        }
+
+        /* Stars Background (Always present) */
+        .stars-container {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; overflow: hidden;
+        }
+        .stars { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-repeat: repeat; background-position: 0 0; will-change: transform; }
+        .stars-small { background-image: radial-gradient(1px 1px at 10% 30%, white, transparent), radial-gradient(1px 1px at 50% 70%, white, transparent), radial-gradient(0.5px 0.5px at 80% 10%, white, transparent), radial-gradient(0.5px 0.5px at 30% 90%, rgba(255,255,255,0.7), transparent), radial-gradient(1px 1px at 90% 50%, rgba(255,255,255,0.8), transparent), radial-gradient(0.5px 0.5px at 5% 5%, rgba(255,255,255,0.6), transparent); background-size: 300px 300px; animation: moveStars 150s linear infinite; }
+        .stars-medium { background-image: radial-gradient(1.5px 1.5px at 25% 15%, white, transparent), radial-gradient(1.5px 1.5px at 65% 45%, white, transparent), radial-gradient(1px 1px at 45% 85%, rgba(255,255,255,0.9), transparent), radial-gradient(1.5px 1.5px at 85% 65%, rgba(255,255,255,0.8), transparent), radial-gradient(1px 1px at 5% 55%, rgba(255,255,255,0.7), transparent); background-size: 400px 400px; animation: moveStars 100s linear infinite; animation-delay: -5s; }
+        .stars-large { background-image: radial-gradient(2px 2px at 35% 25%, white, transparent), radial-gradient(2.5px 2.5px at 75% 75%, white, transparent), radial-gradient(2px 2px at 15% 60%, rgba(255,255,255,0.9), transparent), radial-gradient(2.5px 2.5px at 95% 5%, rgba(255,255,255,0.8), transparent); background-size: 500px 500px; animation: moveStars 50s linear infinite; animation-delay: -10s; }
+        @keyframes moveStars { from { transform: translateY(0); } to { transform: translateY(-100vh); } }
+
+        /* Header */
+        header.spa-header { position: sticky; top: 0; z-index: 100; width: 100%; border-bottom: 1px solid #1f2937; background-color: rgba(0, 0, 0, 0.8); backdrop-filter: blur(10px); }
+        header.spa-header .navbar { display: flex; justify-content: space-between; align-items: center; height: 4rem; }
+        header.spa-header .logo { display: flex; align-items: center; gap: 0.5rem; font-weight: 700; font-size: 1.25rem; color: #fff; text-decoration: none; cursor: pointer; }
+        header.spa-header .logo svg { color: #8b5cf6; width: 24px; height: 24px; }
+        header.spa-header .nav-links { display: none; flex-direction: column; position: absolute; top: 4rem; left: 0; width: 100%; background-color: rgba(17, 24, 39, 0.97); padding: 1rem 0; z-index: 40; border-top: 1px solid #1f2937; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); }
+        header.spa-header .nav-links.active { display: flex; }
+        header.spa-header .nav-links a { display: flex; align-items: center; padding: 0.75rem 1.5rem; font-size: 1rem; font-weight: 500; color: #e5e7eb; text-decoration: none; transition: color 0.2s, background-color 0.2s; border-bottom: 1px solid #1f2937; cursor: pointer; }
+        header.spa-header .nav-links a:last-child { border-bottom: none; }
+        header.spa-header .nav-links a:hover { color: #a78bfa; background-color: #1f2937; }
+        header.spa-header .nav-links a.nav-active { color: #a78bfa; font-weight: 600; background-color: #1f2937; }
+        header.spa-header .nav-links a svg { margin-right: 0.75rem; width: 1.125rem; height: 1.125rem; }
+        header.spa-header .mobile-menu-btn { display: flex; align-items: center; justify-content: center; width: 2.5rem; height: 2.5rem; background: transparent; border: none; color: #fff; cursor: pointer; padding: 0; }
+        header.spa-header .mobile-menu-btn svg { width: 24px; height: 24px; }
+
+        @media (min-width: 768px) {
+            header.spa-header .nav-links { display: flex; position: static; flex-direction: row; width: auto; background-color: transparent; padding: 0; border-top: none; box-shadow: none; gap: 1.5rem; }
+            header.spa-header .nav-links a { padding: 0.5rem 0.75rem; font-size: 0.875rem; color: #fff; border-bottom: none; background-color: transparent; }
+            header.spa-header .nav-links a:hover { color: #a78bfa; background-color: transparent; }
+            header.spa-header .nav-links a.nav-active { color: #a78bfa; background-color: transparent; border-bottom: 2px solid #a78bfa; padding-bottom: calc(0.5rem - 2px); font-weight: 500; }
+            header.spa-header .nav-links a svg { margin-right: 0.5rem; width: 1rem; height: 1rem; }
+            header.spa-header .mobile-menu-btn { display: none; }
+        }
+
+        /* Buttons */
+        .btn { display: inline-flex; align-items: center; justify-content: center; padding: 0.75rem 1.5rem; font-size: 1rem; font-weight: 500; border-radius: 0.5rem; text-decoration: none; transition: all 0.3s ease; position: relative; overflow: hidden; z-index: 1; cursor: pointer; border: none; }
+        .btn-primary { background: linear-gradient(135deg, #8b5cf6, #6366f1); color: #fff; box-shadow: 0 4px 14px rgba(139, 92, 246, 0.3); }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(139, 92, 246, 0.5); }
+        .btn-primary::after { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(135deg, #6366f1, #8b5cf6); z-index: -1; transition: opacity 0.3s ease; opacity: 0; }
+        .btn-primary:hover::after { opacity: 1; }
+        .btn-outline { background: transparent; color: #fff; border: 2px solid rgba(255, 255, 255, 0.8); }
+        .btn-outline:hover { background: rgba(255, 255, 255, 0.1); transform: translateY(-2px); box-shadow: 0 4px 14px rgba(255, 255, 255, 0.15); }
+        .btn svg { margin-left: 0.5rem; width: 1rem; height: 1rem; }
+        @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(139, 92, 246, 0.6); } 70% { box-shadow: 0 0 0 10px rgba(139, 92, 246, 0); } 100% { box-shadow: 0 0 0 0 rgba(139, 92, 246, 0); } }
+        .btn-pulse { animation: pulse 2s infinite; }
+        .btn.disabled { opacity: 0.5; cursor: not-allowed; background: #4b5563; box-shadow: none; }
+        .btn.disabled:hover { transform: none; box-shadow: none; }
+        .btn.btn-small { padding: 0.5rem 1.2rem; font-size: 0.9rem; margin-top: auto; align-self: flex-start; border-width: 1px; pointer-events: none; }
+        /* Add Button Hover Glow */
+        .btn.hover-glow {
+            position: relative;
+            overflow: visible; /* Allow glow to extend */
+        }
+        .btn.hover-glow::after {
+            content: '';
+            position: absolute;
+            top: -50%; left: -50%;
+            width: 200%; height: 200%;
+            background: radial-gradient(circle, rgba(167, 139, 250, 0.5) 0%, rgba(167, 139, 250, 0) 70%);
+            opacity: 0;
+            transition: opacity 0.5s ease;
+            z-index: -1;
+            transform: scale(0.5); /* Start small */
+            pointer-events: none; /* Prevent interaction */
+        }
+        .btn.hover-glow:hover::after {
+            opacity: 1;
+            transform: scale(1); /* Grow */
+        }
+
+        /* Hide old/unused elements */
+        .intro-section, .featured-topics { display: none; } /* Keep these hidden */
+
+        /* --- === NEW Homepage Specific Background === --- */
+        #home-view {
+            position: relative;
+            z-index: 0;
+            background-image: url('https://images.unsplash.com/photo-1464802686167-b939a6910659?q=80&w=1920&auto=format&fit=crop');
+            background-size: cover;
+            background-position: center center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            overflow: hidden;
+        }
+        #home-view::before { /* Overlay */
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-color: rgba(0, 0, 0, 0.6);
+            z-index: 1;
+            pointer-events: none;
+        }
+        #home-view > .hero,
+        #home-view > .enhanced-featured {
+            position: relative;
+            z-index: 2;
+            background-color: transparent;
+        }
+        #home-view > .enhanced-featured {
+             background: transparent;
+             border-top: none;
+        }
+         /* --- End of NEW Homepage Background --- */
+
+        /* --- === Homepage Redesign Styles === --- */
+        .hero {
+            position: relative;
+            width: 100%;
+            padding: 3rem 0;
+            text-align: center;
+            min-height: calc(100vh - 4rem);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+        .hero-bg {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -2;
+        }
+        .hero-bg img {
+            width: 100%; height: 100%;
+            object-fit: cover;
+            filter: brightness(0.5);
+            transform: scale(1.05);
+        }
+        .hero-overlay {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(to top, rgba(0,0,0,0.8), rgba(0,0,0,0.3));
+            z-index: -1;
+        }
+        .hero-content {
+            position: relative;
+            z-index: 1;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 0 1rem;
+            animation: heroFadeIn 1.5s ease-out forwards;
+        }
+        @keyframes heroFadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .hero-title {
+            font-size: 3rem;
+            font-weight: 700;
+            line-height: 1.3;
+            margin-bottom: 1.5rem;
+            color: #fff;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+        }
+        /* Animated gradient text only for specific elements, not all h1 */
+        .animated-gradient-text {
+            background: linear-gradient(90deg, #a78bfa, #fde047, #6ee7b7, #a78bfa);
+            background-size: 300% 100%;
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            animation: gradient-animation 10s ease infinite;
+        }
+        @keyframes gradient-animation {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        .hero-description {
+            font-size: 1.2rem;
+            color: #e5e7eb;
+            margin-bottom: 2.5rem;
+            max-width: 650px;
+            margin-left: auto;
+            margin-right: auto;
+            line-height: 1.7;
+        }
+        .hero-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 1.2rem;
+        }
+        .hero-buttons .btn {
+             padding: 0.8rem 1.8rem;
+             font-size: 1rem;
+             display: inline-flex;
+             align-items: center;
+             gap: 0.6rem;
+        }
+        .hero-buttons .btn svg {
+            margin-left: 0;
+            margin-right: 0.6rem;
+        }
+        .scroll-down-indicator {
+            position: absolute;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            animation: bounce 2s infinite;
+            opacity: 0.7;
+            cursor: default;
+        }
+        @keyframes bounce {
+          0%, 20%, 50%, 80%, 100% { transform: translate(-50%, 0); }
+          40% { transform: translate(-50%, -10px); }
+          60% { transform: translate(-50%, -5px); }
+        }
+        @media (max-width: 768px) {
+          .scroll-down-indicator { display: none; }
+          .hero-title { font-size: 2.5rem; }
+          .hero-description { font-size: 1.1rem; }
+        }
+
+        /* Featured Topics Enhancements */
+        .enhanced-featured {
+            padding: 5rem 0 6rem 0;
+            position: relative;
+        }
+        .enhanced-featured .section-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 1rem;
+            color: #f3f4f6;
+        }
+        .enhanced-featured .section-subtitle {
+            font-size: 1.15rem;
+            color: #9ca3af;
+            text-align: center;
+            margin-bottom: 4rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .enhanced-topic-grid {
+            display: grid;
+            gap: 2.5rem;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        }
+        .enhanced-topic-card {
+            display: flex;
+            flex-direction: column;
+            background: rgba(17, 24, 39, 0.8);
+            backdrop-filter: blur(5px);
+            border-radius: 1rem;
+            padding: 2.5rem;
+            border: 1px solid #1f2937;
+            transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+            text-align: left;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+        .enhanced-topic-card::before { /* Gradient Border */
+            content: "";
+            position: absolute;
+            inset: 0;
+            border-radius: 1rem;
+            padding: 1px;
+            background: linear-gradient(135deg, #8b5cf6, #3b82f6);
+            -webkit-mask:
+               linear-gradient(#fff 0 0) content-box,
+               linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+                    mask-composite: exclude;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+        }
+        .enhanced-topic-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+            border-color: transparent;
+        }
+        .enhanced-topic-card:hover::before {
+            opacity: 1;
+        }
+        .enhanced-topic-card .topic-icon {
+            margin-bottom: 1.5rem;
+            align-self: flex-start;
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.1), rgba(99, 102, 241, 0.1));
+            padding: 0.8rem;
+            border-radius: 0.5rem;
+            display: inline-flex;
+        }
+        .enhanced-topic-card .topic-icon svg {
+            width: 36px;
+            height: 36px;
+        }
+        .enhanced-topic-card[data-topic="khai-quat"] .topic-icon svg { color: #f59e0b; }
+        .enhanced-topic-card[data-topic="kham-pha"] .topic-icon svg { color: #60a5fa; }
+        .enhanced-topic-card[data-topic="game"] .topic-icon svg { color: #a78bfa; }
+        .enhanced-topic-card[data-topic="tin-tuc"] .topic-icon svg { color: #4ade80; }
+        .enhanced-topic-card[data-topic="thu-vien"] .topic-icon svg { color: #f87171; }
+        .highlight-card-new .topic-icon svg { color: #fbbf24; }
+        .enhanced-topic-card .topic-title {
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: #fff;
+            margin-bottom: 0.75rem;
+        }
+        .enhanced-topic-card .topic-description {
+            color: #adb5bd;
+            flex-grow: 1;
+            margin-bottom: 1.8rem;
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+        .enhanced-topic-card .btn.btn-small {
+            padding: 0.6rem 1.3rem;
+            font-size: 0.85rem;
+            margin-top: auto;
+            align-self: flex-start;
+            border-width: 1px;
+            pointer-events: none;
+            background: transparent;
+            border-color: #4b5563;
+            color: #e5e7eb;
+            transition: background-color 0.3s, border-color 0.3s, color 0.3s;
+        }
+        .enhanced-topic-card:hover .btn.btn-small {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: #a78bfa;
+            color: #fff;
+        }
+        .highlight-card-new {
+            background: linear-gradient(135deg, rgba(31, 41, 55, 0.8), rgba(55, 48, 163, 0.8));
+            border-color: #4f46e5;
+            cursor: default;
+        }
+        .highlight-card-new:hover {
+             transform: translateY(-8px);
+             box-shadow: 0 15px 30px rgba(79, 70, 229, 0.3);
+             border-color: transparent;
+        }
+        .highlight-card-new:hover::before {
+            opacity: 1;
+            background: linear-gradient(135deg, #fbbf24, #f87171);
+        }
+        .highlight-card-new .topic-title { color: #c7d2fe; }
+        .highlight-card-new .topic-description { color: #a5b4fc; }
+        .highlight-card-new .btn.btn-small {
+            background-color: #4f46e5;
+            border-color: #4f46e5;
+            color: #fff;
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        .highlight-card-new:hover .btn.btn-small {
+            background-color: #4f46e5;
+        }
+        body.showing-hero .enhanced-featured { display: block; }
+
+        @media (max-width: 768px) {
+            .enhanced-topic-grid { grid-template-columns: 1fr; }
+            .enhanced-featured .section-title { font-size: 2.1rem; }
+            .enhanced-featured .section-subtitle { font-size: 1.05rem; margin-bottom: 3rem;}
+            .enhanced-topic-card { padding: 2rem; }
+        }
+        /* --- === End of Homepage Redesign Styles === --- */
+
+        /* --- Main Router Outlet & Page Styles --- */
+        main { min-height: calc(100vh - 4rem); position: relative; z-index: 1; }
+        .page-router-outlet { }
+        section.router-page { display: none; background-color: transparent; padding: 0; }
+        section.router-page.active { display: block; animation: fadeIn 0.5s ease; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        /* === START: NEW Khai Quat Page Styles V2 === */
+        /* General Section Styling V2 */
+        .redesigned-section.v2 {
+            background: linear-gradient(180deg, rgba(10, 14, 41, 0) 0%, rgba(10, 14, 41, 0.6) 70%, #0A0E29 100%);
+            border-top: 1px solid rgba(55, 65, 81, 0.5); /* Subtle top border */
+            border-bottom: 1px solid rgba(55, 65, 81, 0.5); /* Subtle bottom border */
+            position: relative; /* Ensure positioning context */
+            overflow: hidden; /* Contain pseudo-elements */
+        }
+
+        .redesigned-section-title.v2 {
+            font-size: 2.5rem; /* Larger title */
+            font-weight: 700; /* Keep title bold */
+            color: #e5e7eb;
+            text-shadow: 0 2px 15px rgba(139, 92, 246, 0.3); /* Add subtle shadow */
+            margin-bottom: 1rem;
+            text-align: center; /* Ensure text itself is centered */
+            display: flex;
+            align-items: center;
+            justify-content: center; /* Center icon and text */
+            gap: 1rem;
+            position: relative;
+            padding-bottom: 1rem;
+        }
+        .redesigned-section-title.v2::after { /* Decorative underline */
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 120px;
+            height: 2px;
+            background: linear-gradient(90deg, #a78bfa, #6366f1);
+            border-radius: 2px;
+        }
+        .redesigned-section-title.v2 svg {
+            color: #a78bfa;
+            width: 32px; /* Match size in HTML */
+            height: 32px;
+            flex-shrink: 0;
+        }
+
+        .redesigned-section-subtitle.v2 {
+            font-size: 1.2rem;
+            color: #b0bec5; /* Slightly brighter subtitle */
+            text-align: center;
+            margin-bottom: 4rem; /* More space below subtitle */
+            max-width: 750px;
+            margin-left: auto;
+            margin-right: auto;
+            line-height: 1.7;
+        }
+
+
+        /* Enhanced Timeline V2 (with Extra Info) */
+        .enhanced-timeline-wrapper {
+            max-width: 1000px; /* Wider wrapper */
+            margin: 3rem auto 0 auto;
+            position: relative;
+        }
+
+        .enhanced-timeline {
+            position: relative;
+            padding: 2rem 0;
+        }
+
+        .enhanced-timeline::before { /* The central line */
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 4px;
+            height: 100%;
+            background: linear-gradient(to bottom, rgba(139, 92, 246, 0.2), rgba(99, 102, 241, 0.8), rgba(139, 92, 246, 0.2));
+            border-radius: 3px;
+            z-index: 0;
+        }
+
+        .timeline-entry {
+            position: relative;
+            width: 100%; /* Entry spans full width */
+            margin-bottom: 3rem; /* Reduced space between entries */
+            opacity: 0;
+            transform: translateY(30px);
+            animation: timelineFadeIn 0.8s ease-out forwards;
+            animation-delay: calc(var(--delay, 0) * 0.2s);
+            display: flex; /* Prepare for flex layout inside */
+            justify-content: center; /* Center point */
+        }
+        .timeline-entry:last-child {
+            margin-bottom: 0;
+        }
+
+        .timeline-point { /* The dot on the line */
+            position: absolute;
+            top: 20px; /* Position near top, adjust as needed */
+            left: 50%;
+            transform: translateX(-50%);
+            width: 18px; /* Slightly larger point */
+            height: 18px;
+            background-color: #1a202e; /* Darker background */
+            border: 4px solid #8b5cf6; /* Thicker border */
+            border-radius: 50%;
+            z-index: 3; /* Above line and content wrappers */
+            box-shadow: 0 0 10px rgba(139, 92, 246, 0.5); /* Add glow */
+        }
+
+        .timeline-entry-content {
+            display: flex;
+            width: 100%;
+            align-items: stretch; /* Ensures items stretch vertically */
+            padding-top: 10px; /* Space below the point */
+        }
+
+        .timeline-card-container,
+        .timeline-extra-info {
+            flex-basis: calc(50% - 2rem); /* Divide space, account for gap */
+            max-width: calc(50% - 2rem);
+        }
+
+        /* Position elements using order */
+        .timeline-entry:nth-child(odd) .timeline-card-container { order: 1; margin-right: 2rem; }
+        .timeline-entry:nth-child(odd) .timeline-extra-info { order: 2; margin-left: 2rem; text-align: left; }
+
+        .timeline-entry:nth-child(even) .timeline-card-container { order: 2; margin-left: 2rem; }
+        .timeline-entry:nth-child(even) .timeline-extra-info { order: 1; margin-right: 2rem; text-align: right; }
+
+
+        .timeline-card {
+            background: rgba(31, 41, 55, 0.8);
+            backdrop-filter: blur(5px);
+            border-radius: 0.75rem;
+            overflow: hidden;
+            border: 1px solid #30363d;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            display: flex; /* Ensure card itself can stretch */
+            flex-direction: column; /* Stack image and content */
+        }
+        .timeline-card:hover {
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 10px 25px rgba(139, 92, 246, 0.2);
+        }
+        .timeline-card img {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+            display: block;
+            border-bottom: 1px solid #30363d;
+            flex-shrink: 0; /* Prevent image shrinking */
+        }
+        .timeline-card .card-content {
+            padding: 1.2rem 1.5rem;
+            text-align: left; /* Keep card content left-aligned */
+            flex-grow: 1; /* Allow content to take space */
+        }
+        .timeline-card h3 {
+            font-size: 1.25rem;
+            color: #c4b5fd;
+            margin: 0 0 0.6rem 0;
+            font-weight: 600;
+        }
+        .timeline-card p {
+            font-size: 0.95rem;
+            color: #d1d5db;
+            line-height: 1.6;
+            margin: 0;
+        }
+
+        /* Styling for the extra info block */
+        .timeline-extra-info {
+            display: flex;
+            flex-direction: column;
+            padding: 1.2rem 1.5rem; /* Match card vertical padding */
+            color: #b0bec5;
+            font-size: 0.9rem;
+            line-height: 1.6;
+            border-left: 3px solid rgba(99, 102, 241, 0.3);
+            border-right: 3px solid rgba(99, 102, 241, 0.3);
+            border-radius: 0.3rem;
+            background: rgba(17, 24, 39, 0.4);
+            margin-top: 10px; /* Align roughly with card top */
+            transition: background-color 0.3s ease, border-color 0.3s ease;
+        }
+        .timeline-entry:nth-child(odd) .timeline-extra-info { border-left-color: #6366f1; border-right: none; }
+        .timeline-entry:nth-child(even) .timeline-extra-info { border-right-color: #6366f1; border-left: none; }
+
+        .timeline-entry:hover .timeline-extra-info { /* Optional: Slight style change on parent hover */
+            background: rgba(31, 41, 55, 0.5);
+        }
+
+        .timeline-extra-info h4 {
+            font-size: 1rem;
+            color: #a78bfa;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            flex-shrink: 0;
+        }
+        .timeline-extra-info ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            flex-grow: 1;
+        }
+        .timeline-extra-info li {
+            margin-bottom: 0.3rem;
+            position: relative;
+            padding-left: 1rem;
+        }
+        .timeline-extra-info li::before {
+            content: '»';
+            position: absolute;
+            left: 0;
+            top: 0;
+            color: #8b5cf6;
+            font-weight: bold;
+        }
+
+        /* Responsive Timeline V2 */
+        @media (max-width: 768px) {
+            .enhanced-timeline::before { left: 15px; }
+            .timeline-entry { opacity: 1; transform: none; animation: none; }
+            .timeline-point { left: 0; transform: translateX(calc(-50% + 15px)); top: 0; }
+            .timeline-entry-content { flex-direction: column; width: 100%; padding-left: 3rem; padding-top: 0; align-items: stretch; }
+            .timeline-card-container, .timeline-extra-info { flex-basis: auto; max-width: 100%; order: 0 !important; margin: 0 0 1.5rem 0 !important; text-align: left !important; border-left: none !important; border-right: none !important; padding: 1rem; min-height: unset; }
+            .timeline-extra-info { margin-top: 0; border-top: 1px solid #30363d; }
+            .timeline-card img { height: 150px; }
+        }
+
+        @keyframes timelineFadeIn {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+
+        /* CSS cho Section "Các Lĩnh Vực Nghiên Cứu" (id="cac-nhanh") */
+        .section-highlight-enhanced.v2 {
+            background: radial-gradient(circle at top center, rgba(55, 48, 163, 0.15) 0%, rgba(17, 24, 39, 0) 60%),
+                        linear-gradient(180deg, #0f172a 0%, #111827 100%);
+            border-top: 1px solid #374151;
+            border-bottom: 1px solid #374151;
+            position: relative;
+        }
+        #cac-nhanh .redesigned-section-title.v2 {
+            font-size: 2.5rem;
+            color: #e5e7eb;
+            text-shadow: 0 2px 15px rgba(139, 92, 246, 0.3);
+            margin-bottom: 1rem;
+            gap: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            padding-bottom: 1rem;
+        }
+        #cac-nhanh .redesigned-section-title.v2::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 120px;
+            height: 2px;
+            background: linear-gradient(90deg, #a78bfa, #6366f1);
+            border-radius: 2px;
+        }
+        #cac-nhanh .redesigned-section-title.v2 svg {
+            color: #a78bfa;
+            width: 32px;
+            height: 32px;
+            flex-shrink: 0;
+        }
+        #cac-nhanh .redesigned-section-subtitle.v2 {
+            font-size: 1.2rem;
+            color: #b0bec5;
+            margin-bottom: 4rem;
+            max-width: 750px;
+            text-align: center;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .branch-grid-wrapper {
+            padding: 5px;
+            margin-top: 1rem;
+        }
+        .branch-grid.enhanced-branch-grid.v2 {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr); /* Always 4 columns */
+            gap: 1.5rem;
+        }
+        .branch-card.enhanced-branch-card.v2 {
+            background: linear-gradient(145deg, rgba(31, 41, 55, 0.7), rgba(49, 60, 82, 0.5));
+            border: 1px solid transparent;
+            border-radius: 0.8rem;
+            padding: 2rem 1.5rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
+            z-index: 1;
+            cursor: default;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .branch-card.enhanced-branch-card.v2::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            border-radius: inherit;
+            padding: 1px;
+            background: linear-gradient(135deg, #8b5cf6, #6366f1);
+            -webkit-mask:
+            linear-gradient(#fff 0 0) content-box,
+            linear-gradient(#fff 0 0);
+            -webkit-mask-composite: destination-out;
+                    mask-composite: exclude;
+            opacity: 0;
+            transition: opacity 0.4s ease;
+            z-index: -1;
+            pointer-events: none;
+        }
+        .branch-card.enhanced-branch-card.v2:hover {
+            transform: translateY(-8px) scale(1.03);
+            box-shadow: 0 15px 35px rgba(139, 92, 246, 0.25);
+            background: linear-gradient(145deg, rgba(49, 60, 82, 0.8), rgba(55, 48, 163, 0.6));
+        }
+        .branch-card.enhanced-branch-card.v2:hover::before {
+            opacity: 1;
+        }
+        .card-icon-bg.v2 {
+            width: 65px;
+            height: 65px;
+            flex-shrink: 0;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(139, 92, 246, 0.15), rgba(99, 102, 241, 0.1));
+            margin-bottom: 1.5rem;
+            border: 1px solid rgba(167, 139, 250, 0.2);
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .card-icon-bg.v2 svg {
+            width: 30px;
+            height: 30px;
+            color: #a78bfa;
+            transition: all 0.3s ease;
+        }
+        .branch-card.enhanced-branch-card.v2:hover .card-icon-bg.v2 {
+            background: radial-gradient(circle, rgba(139, 92, 246, 0.3), rgba(99, 102, 241, 0.2));
+            border-color: rgba(167, 139, 250, 0.5);
+            transform: scale(1.1);
+        }
+        .branch-card.enhanced-branch-card.v2:hover .card-icon-bg.v2 svg {
+            color: #ede9fe;
+            transform: rotate(10deg);
+        }
+        .branch-card.enhanced-branch-card.v2 h3 {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #f3f4f6;
+            margin-bottom: 0.7rem;
+            flex-shrink: 0;
+        }
+        .branch-card.enhanced-branch-card.v2 p {
+            font-size: 0.9rem;
+            color: #bdc3c7;
+            line-height: 1.6;
+            flex-grow: 1;
+            margin: 0;
+        }
+        @media (max-width: 992px) { /* Example adjustment for slightly smaller screens */
+             .branch-grid.enhanced-branch-grid.v2 {
+                 grid-template-columns: repeat(2, 1fr); /* Switch to 2 columns */
+                 gap: 1.2rem;
+             }
+        }
+        @media (max-width: 576px) { /* Example adjustment for very small screens */
+            .branch-grid.enhanced-branch-grid.v2 {
+                grid-template-columns: 1fr; /* Switch to 1 column */
+                gap: 1rem;
+            }
+             .branch-card.enhanced-branch-card.v2 { padding: 1.5rem 1rem; }
+            .card-icon-bg.v2 { width: 50px; height: 50px; margin-bottom: 1rem;}
+            .card-icon-bg.v2 svg { width: 24px; height: 24px; }
+            .branch-card.enhanced-branch-card.v2 h3 { font-size: 1rem; }
+            .branch-card.enhanced-branch-card.v2 p { font-size: 0.85rem; }
+        }
+
+
+        /* Importance Section V3 (Card Grid) */
+        #tam-quan-trong .redesigned-section-title.v2 svg { color: #6ee7b7; } /* Different icon color */
+        #tam-quan-trong .redesigned-section-title.v2::after { background: linear-gradient(90deg, #6ee7b7, #34d399); } /* Different underline color */
+
+        .importance-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); /* Responsive grid */
+            gap: 2rem;
+            margin-top: 1rem;
+        }
+
+        .importance-card {
+            background: linear-gradient(155deg, rgba(31, 41, 55, 0.85) 0%, rgba(17, 24, 39, 0.7) 100%);
+            border-radius: 0.75rem;
+            padding: 2.5rem 2rem;
+            border: 1px solid #2d3748; /* Darker border */
+            display: flex;
+            flex-direction: column;
+            align-items: center; /* Center content */
+            text-align: center; /* Center text */
+            transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+            position: relative; /* For pseudo-elements */
+            overflow: hidden;
+        }
+
+        .importance-card::before { /* Subtle top glow */
+            content: '';
+            position: absolute;
+            top: 0; left: 50%;
+            transform: translateX(-50%);
+            width: 80%;
+            height: 3px;
+            background: radial-gradient(ellipse at center top, rgba(110, 231, 183, 0.5) 0%, transparent 70%);
+            opacity: 0;
+            transition: opacity 0.4s ease;
+            border-radius: 0 0 50% 50%; /* Soften the glow edge */
+        }
+
+        .importance-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.3), 0 0 25px rgba(110, 231, 183, 0.15); /* Shadow + glow */
+            border-color: rgba(110, 231, 183, 0.4); /* Highlight border */
+        }
+        .importance-card:hover::before {
+            opacity: 1;
+        }
+
+        .importance-card-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, rgba(52, 211, 153, 0.1), rgba(16, 185, 129, 0.2));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+            color: #6ee7b7; /* Icon color */
+            flex-shrink: 0;
+            border: 1px solid rgba(110, 231, 183, 0.2);
+            transition: transform 0.3s ease;
+        }
+        .importance-card:hover .importance-card-icon {
+            transform: scale(1.1) rotate(5deg);
+        }
+        .importance-card-icon svg {
+            width: 28px;
+            height: 28px;
+        }
+
+        .importance-card-content {
+            flex-grow: 1; /* Allow content to push icon up */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .importance-card h3 {
+            font-size: 1.3rem;
+            color: #d1fae5; /* Light green/white text */
+            margin-bottom: 0.8rem;
+            font-weight: 600;
+        }
+
+        .importance-card p {
+            color: #a3b3c6; /* Lighter gray */
+            line-height: 1.7;
+            font-size: 0.95rem;
+            margin: 0;
+        }
+
+        .importance-card.placeholder { /* Style for the placeholder card */
+            background: rgba(31, 41, 55, 0.5); /* More subdued */
+            border-color: #374151;
+        }
+        .importance-card.placeholder:hover {
+             transform: none;
+             box-shadow: none;
+             border-color: #374151;
+        }
+         .importance-card.placeholder::before {
+            opacity: 0 !important;
+         }
+         .importance-card.placeholder .importance-card-icon {
+            background: rgba(75, 85, 99, 0.2);
+            border-color: rgba(107, 114, 128, 0.3);
+            color: #9ca3af;
+         }
+          .importance-card.placeholder:hover .importance-card-icon {
+            transform: none;
+          }
+           .importance-card.placeholder h3 { color: #9ca3af; }
+           .importance-card.placeholder p { color: #6b7280; }
+
+
+        @media (max-width: 992px) { /* Adjust for 2 columns */
+            .importance-grid {
+                grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            }
+            .importance-card { padding: 2rem 1.5rem; }
+        }
+        @media (max-width: 768px) { /* Single column adjustments */
+            .importance-card h3 { font-size: 1.2rem; }
+            .importance-card p { font-size: 0.9rem; }
+        }
+        /* === END: NEW Khai Quat Page Styles V2 === */
+
+
+        /* --- Game Page Styles (including Quiz) --- */
+        #game-thien-van .container { padding-top: 3rem; padding-bottom: 3rem;}
+        .game-grid-enhanced { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 2rem; }
+        .game-card-enhanced { background: #111827; border: 1px solid #374151; border-radius: 0.75rem; padding: 2rem; text-align: center; display: flex; flex-direction: column; align-items: center; transition: transform 0.3s ease, box-shadow 0.3s ease; position: relative; overflow: hidden; }
+        .game-card-enhanced:hover:not(.quiz-card) { /* Exclude quiz card from simple hover */
+             transform: translateY(-5px); box-shadow: 0 8px 25px rgba(139, 92, 246, 0.1);
+        }
+        .game-card-icon { margin-bottom: 1.5rem; } .game-card-icon svg { width: 48px; height: 48px; }
+        .game-card-enhanced h3 { font-size: 1.4rem; color: #e5e7eb; margin-bottom: 0.75rem; }
+        .game-card-enhanced p { color: #9ca3af; margin-bottom: 2rem; flex-grow: 1; font-size: 0.9rem; line-height: 1.6; }
+        .game-status { position: absolute; top: 1rem; right: 1rem; background-color: #fbbf24; color: #111827; padding: 0.2rem 0.6rem; border-radius: 0.25rem; font-size: 0.7rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; }
+        .game-card-enhanced .btn { margin-top: auto; }
+
+        /* --- Quiz Game Styles --- */
+        .quiz-card {
+            min-height: 400px; /* Ensure space */
+            justify-content: center; /* Center intro initially */
+            align-items: center; /* Center items horizontally */
+            padding-bottom: 1rem; /* Add some bottom padding */
+        }
+        #quiz-intro, #quiz-container, #score-container {
+            width: 100%; /* Ensure they take full card width */
+            display: flex; /* Use flex for better internal alignment */
+            flex-direction: column;
+            align-items: center; /* Center content */
+            text-align: center; /* Center text in intro/score */
+        }
+        #quiz-intro {
+            /* Ensure intro is visible by default unless 'hide' is added */
+            display: flex;
+        }
+        #quiz-intro p {
+             flex-grow: 0; /* Prevent intro paragraph from growing excessively */
+             margin-bottom: 1.5rem; /* Space before button */
+             max-width: 90%; /* Prevent text overflow on small cards */
+        }
+        #quiz-container {
+            text-align: left; /* Align answer buttons text left */
+            margin-top: 1rem;
+            align-items: stretch; /* Stretch children for buttons */
+            width: 100%;
+        }
+        #question-text {
+            font-size: 1.1rem; /* Slightly smaller */
+            color: #e5e7eb;
+            margin-bottom: 1.5rem;
+            font-weight: 600;
+            line-height: 1.4;
+            text-align: center; /* Center question text */
+            width: 100%;
+        }
+        #answer-buttons {
+            display: grid;
+            gap: 0.7rem; /* Slightly smaller gap */
+            margin-bottom: 1rem;
+            width: 100%; /* Make grid full width */
+        }
+        .answer-btn {
+            width: 100%;
+            padding: 0.7rem 1rem; /* Adjust padding */
+            font-size: 0.9rem; /* Adjust font size */
+            font-weight: 500;
+            text-align: left;
+            cursor: pointer;
+            border: 1px solid #4b5563;
+            background-color: #1f2937;
+            color: #e5e7eb;
+            border-radius: 0.375rem;
+            transition: background-color 0.2s, border-color 0.2s;
+        }
+        .answer-btn:hover:not([disabled]) {
+            background-color: #374151;
+            border-color: #6366f1;
+        }
+        .answer-btn:disabled {
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+        .answer-btn.correct {
+            background-color: #10b981;
+            border-color: #059669;
+            color: #fff;
+        }
+        .answer-btn.incorrect {
+            background-color: #ef4444;
+            border-color: #dc2626;
+            color: #fff;
+        }
+        .feedback-msg {
+            margin-top: 0.8rem;
+            margin-bottom: 0.8rem;
+            font-weight: 600;
+            min-height: 1.5em;
+            text-align: center; /* Center feedback */
+        }
+        .feedback-msg.correct { color: #34d399; }
+        .feedback-msg.incorrect { color: #f87171; }
+        #next-btn {
+            margin-top: 1rem;
+            background-color: #4b5563;
+            align-self: center; /* Center button */
+        }
+        #next-btn:hover { background-color: #6b7280; }
+        #score-container {
+            text-align: center;
+            margin-top: 2rem;
+        }
+        #score-container h2 { color: #a78bfa; margin-bottom: 1rem; font-size: 1.5rem;}
+        #score-container p { font-size: 1.1rem; margin-bottom: 1.5rem; }
+        #score-container #restart-btn { align-self: center; } /* Center button */
+        .hide { display: none !important; } /* Use important to override initial flex */
+         /* --- End Quiz Game Styles --- */
+
+        /* --- Kham Pha Page Styles --- */
+        :root { --new-primary: #0a0e29; --new-secondary: #1a1f4b; --new-accent: #7b52ab; --new-text: #ffffff; --new-highlight: #ff6b6b; }
+        section#kham-pha.router-page { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: transparent; color: var(--new-text); padding: 0; }
+        #kham-pha main.kham-pha-main { max-width: 1200px; margin: 0 auto; padding: 3rem 1rem; position: relative; z-index: 1; }
+        #kham-pha .section { margin-bottom: 5rem; opacity: 0; transform: translateY(50px); transition: opacity 1s ease, transform 1s ease; }
+        #kham-pha .section.visible { opacity: 1; transform: translateY(0); }
+        #kham-pha .section-title { font-size: 2.5rem; margin-bottom: 1.5rem; color: var(--new-accent); border-bottom: 2px solid var(--new-accent); padding-bottom: 0.5rem; display: inline-block; font-family: inherit; }
+        #kham-pha .card-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 2rem; }
+        #kham-pha .card { background: rgba(26, 31, 75, 0.7); border-radius: 15px; overflow: hidden; box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3); transition: transform 0.3s ease, box-shadow 0.3s ease; backdrop-filter: blur(10px); border: 1px solid rgba(123, 82, 171, 0.2); }
+        #kham-pha .card:hover { transform: translateY(-10px); box-shadow: 0 15px 30px rgba(123, 82, 171, 0.4); }
+        #kham-pha .card-image { width: 100%; height: 200px; object-fit: cover; transition: transform 0.5s ease; }
+        #kham-pha .card:hover .card-image { transform: scale(1.05); }
+        #kham-pha .card-content { padding: 1.5rem; }
+        #kham-pha .card-title { font-size: 1.5rem; margin-bottom: 0.5rem; color: var(--new-highlight); font-family: inherit; }
+        #kham-pha .card-text { line-height: 1.6; margin-bottom: 1rem; font-family: inherit; color: var(--new-text); }
+        #kham-pha .btn-new { display: inline-block; padding: 0.8rem 1.5rem; background: linear-gradient(45deg, var(--new-accent), var(--new-highlight)); color: white; text-decoration: none; border-radius: 30px; font-weight: bold; transition: transform 0.3s ease, box-shadow 0.3s ease; border: none; cursor: pointer; font-family: inherit; }
+        #kham-pha .btn-new:hover { transform: translateY(-3px); box-shadow: 0 5px 15px rgba(123, 82, 171, 0.5); }
+        #kham-pha .panorama { width: 100%; height: 400px; background-image: url('https://images.unsplash.com/photo-1462331940025-496dfbfc7564?q=80&w=1920&auto=format&fit=crop'); background-size: cover; background-position: center; background-attachment: fixed; margin: 3rem 0; border-radius: 15px; position: relative; overflow: hidden; }
+        #kham-pha .panorama::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(to right, rgba(10, 14, 41, 0.8), transparent, rgba(10, 14, 41, 0.8)); }
+        #kham-pha .panorama-text { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; width: 80%; z-index: 2; }
+        #kham-pha .panorama-title { font-size: 2.5rem; margin-bottom: 1rem; color: white; text-shadow: 0 0 10px rgba(0, 0, 0, 0.5); font-family: inherit; }
+        #kham-pha .panorama-subtitle { font-size: 1.2rem; color: #ddd; text-shadow: 0 0 10px rgba(0, 0, 0, 0.5); font-family: inherit; }
+        #kham-pha .fact-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 1.5rem; margin: 2rem 0; }
+        #kham-pha .fact { background: rgba(26, 31, 75, 0.5); padding: 1.5rem; border-radius: 10px; text-align: center; border: 1px solid rgba(123, 82, 171, 0.2); transition: transform 0.3s ease; }
+        #kham-pha .fact:hover { transform: scale(1.05); background: rgba(26, 31, 75, 0.8); }
+        #kham-pha .fact-number { font-size: 2.5rem; font-weight: bold; color: var(--new-highlight); margin-bottom: 0.5rem; font-family: inherit; }
+        #kham-pha .fact-text { font-size: 1rem; font-family: inherit; }
+        @media (max-width: 768px) { #kham-pha .section-title { font-size: 2rem; } #kham-pha .panorama { height: 300px; } #kham-pha .panorama-title { font-size: 2rem; } }
+        @media (max-width: 480px) { #kham-pha .section-title { font-size: 1.8rem; } #kham-pha .card-container { grid-template-columns: 1fr; } #kham-pha .panorama { height: 250px; } #kham-pha .panorama-title { font-size: 1.8rem; } }
+
+        /* --- Tin Tuc Page Styles --- */
+        section#tin-tuc.router-page { font-family: 'Roboto', sans-serif; background-color: transparent; color: #fff; position: relative; z-index: 1; min-height: 100vh; padding: 0; }
+        #tin-tuc .tin-tuc-container { max-width: 1200px; margin: 0 auto; padding: 3rem 1rem; position: relative; z-index: 1;}
+        #tin-tuc .news-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 2rem; }
+        #tin-tuc .news-card { background: rgba(25, 25, 112, 0.6); backdrop-filter: blur(10px); border-radius: 15px; overflow: hidden; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5); transition: transform 0.3s, box-shadow 0.3s; border: 1px solid rgba(255, 255, 255, 0.1); }
+        #tin-tuc .news-card:hover { transform: translateY(-10px); box-shadow: 0 15px 40px rgba(0, 0, 0, 0.7); }
+        #tin-tuc .news-image { height: 200px; overflow: hidden; }
+        #tin-tuc .news-image img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s; }
+        #tin-tuc .news-card:hover .news-image img { transform: scale(1.1); }
+        #tin-tuc .news-content { padding: 1.5rem; }
+        #tin-tuc .news-date { display: inline-block; background: linear-gradient(135deg, #4169E1, #9370DB); color: white; padding: 0.3rem 0.8rem; border-radius: 20px; font-size: 0.8rem; margin-bottom: 1rem; }
+        #tin-tuc .news-title { font-size: 1.5rem; margin-bottom: 1rem; color: #ADD8E6; font-family: inherit; }
+        #tin-tuc .news-excerpt { color: #B0C4DE; margin-bottom: 1.5rem; line-height: 1.6; font-family: inherit; }
+        #tin-tuc .read-more { display: inline-block; background: linear-gradient(135deg, #4169E1, #9370DB); color: white; padding: 0.5rem 1.5rem; border-radius: 25px; text-decoration: none; font-weight: 500; transition: transform 0.3s, box-shadow 0.3s; }
+        #tin-tuc .read-more:hover { transform: translateY(-3px); box-shadow: 0 5px 15px rgba(65, 105, 225, 0.4); }
+        #tin-tuc .featured-news { margin-bottom: 3rem; background: rgba(25, 25, 112, 0.6); backdrop-filter: blur(10px); border-radius: 15px; overflow: hidden; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5); border: 1px solid rgba(255, 255, 255, 0.1); }
+        #tin-tuc .featured-content { display: grid; grid-template-columns: 1fr 1fr; gap: 0; }
+        #tin-tuc .featured-image { height: 400px; overflow: hidden; }
+        #tin-tuc .featured-image img { width: 100%; height: 100%; object-fit: cover; }
+        #tin-tuc .featured-text { padding: 2rem; display: flex; flex-direction: column; justify-content: center; }
+        #tin-tuc .featured-label { display: inline-block; background: linear-gradient(135deg, #FF4500, #FF8C00); color: white; padding: 0.3rem 0.8rem; border-radius: 20px; font-size: 0.8rem; margin-bottom: 1rem; align-self: flex-start; }
+        #tin-tuc .featured-title { font-size: 2rem; margin-bottom: 1rem; color: #ADD8E6; font-family: inherit; }
+        #tin-tuc .featured-excerpt { color: #B0C4DE; margin-bottom: 1.5rem; line-height: 1.6; font-family: inherit; }
+        #tin-tuc .featured-text .read-more { align-self: flex-start; }
+        @media (max-width: 768px) { #tin-tuc .featured-content { grid-template-columns: 1fr; } #tin-tuc .featured-image { height: 250px; } #tin-tuc .news-grid { grid-template-columns: 1fr; } }
+
+        /* --- Thu Vien Page Styles --- */
+        section#thu-vien.router-page { font-family: 'Roboto', sans-serif; background-color: transparent; color: #fff; line-height: 1.6; padding: 0; min-height: 100vh; }
+        #thu-vien .thu-vien-container { width: 90%; max-width: 1200px; margin: 0 auto; padding: 3rem 1rem; position: relative; z-index: 1;}
+        #thu-vien .section-title { text-align: center; font-size: 2.5rem; margin: 3rem 0 2rem; color: #64b5f6; text-shadow: 0 0 10px rgba(0, 0, 0, 0.8); font-family: inherit; }
+        #thu-vien .gallery { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 2rem; padding: 0; }
+        #thu-vien .gallery-item { background: rgba(13, 17, 38, 0.7); border-radius: 10px; overflow: hidden; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5); transition: transform 0.3s, box-shadow 0.3s; }
+        #thu-vien .gallery-item:hover { transform: translateY(-10px); box-shadow: 0 12px 24px rgba(0, 0, 0, 0.7); }
+        #thu-vien .gallery-item img, #thu-vien .gallery-item video { width: 100%; height: 250px; object-fit: cover; display: block; }
+        #thu-vien .gallery-item-content { padding: 1.5rem; }
+        #thu-vien .gallery-item-content h3 { font-size: 1.5rem; margin-bottom: 0.5rem; color: #64b5f6; font-family: inherit; }
+        #thu-vien .gallery-item-content p { font-size: 1rem; color: #ccc; font-family: inherit; }
+        #thu-vien .video-section { padding: 3rem 0; }
+        #thu-vien .video-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(400px, 1fr)); gap: 2rem; }
+        #thu-vien .video-item { background: rgba(13, 17, 38, 0.7); border-radius: 10px; overflow: hidden; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5); }
+        #thu-vien .video-item video { width: 100%; display: block; }
+        #thu-vien .video-content { padding: 1.5rem; }
+        #thu-vien .video-content h3 { font-size: 1.5rem; margin-bottom: 0.5rem; color: #64b5f6; font-family: inherit; }
+        #thu-vien .video-content p { font-size: 1rem; color: #ccc; font-family: inherit; }
+        @media (max-width: 768px) { #thu-vien .gallery { grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); } #thu-vien .video-container { grid-template-columns: 1fr; } }
+
+        /* --- Router Page Hero Styles (for individual pages) --- */
+        .router-page-hero { min-height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 4rem 1rem 2rem 1rem; position: relative; z-index: 1; color: #fff; overflow: hidden; background-size: cover; background-position: center center; }
+        .router-page-hero::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.8)); z-index: -1; }
+        .router-page-hero h1 { font-size: 3rem; margin-bottom: 1rem; font-weight: 700; text-shadow: 2px 2px 4px rgba(0,0,0,0.6); max-width: 90%; /* Reset potential conflicting styles */ animation: none; background: none; -webkit-background-clip: unset; background-clip: unset; color: #fff; }
+        /* Specific hero title styles like animated gradient only where intended */
+        #khai-quat .router-page-hero h1.animated-gradient-text { background: linear-gradient(90deg, #a78bfa, #fde047, #6ee7b7, #a78bfa); background-size: 300% 100%; -webkit-background-clip: text; background-clip: text; color: transparent; animation: gradient-animation 10s ease infinite; font-size: 3.5rem; line-height: 1.2; }
+
+        .router-page-hero p.page-subtitle { font-size: 1.2rem; color: #e5e7eb; max-width: 700px; margin-left: auto; margin-right: auto; opacity: 0.9; line-height: 1.7; margin-bottom: 2rem; }
+        .router-page-hero .btn { margin-top: 1rem; }
+        /* Backgrounds for specific page heroes */
+        #khai-quat > .router-page-hero { background-image: url('https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?q=80&w=1920&auto=format&fit=crop'); }
+        #kham-pha > .router-page-hero { background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.7)), url('https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1920&auto=format&fit=crop'); font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        #game-thien-van > .router-page-hero { background-image: url('https://images.unsplash.com/photo-1518066000714-58c45f1a2300?q=80&w=1920&auto=format&fit=crop'); }
+        #tin-tuc > .router-page-hero { background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.7)), url('https://images.unsplash.com/photo-1502134249126-9f3755a50d78?q=80&w=1920&auto=format&fit=crop'); font-family: 'Roboto', sans-serif; }
+        #thu-vien > .router-page-hero { background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.7)), url('https://images.unsplash.com/photo-1444703686981-a3abbc4d4fe3?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80'); font-family: 'Roboto', sans-serif; }
+         .router-page-hero .btn-new-library { display: inline-block; background: linear-gradient(to right, #1e88e5, #64b5f6); color: #fff; padding: 0.8rem 2rem; border-radius: 50px; text-decoration: none; font-weight: 600; transition: transform 0.3s, box-shadow 0.3s; box-shadow: 0 4px 12px rgba(30, 136, 229, 0.5); font-family: 'Roboto', sans-serif; }
+         .router-page-hero .btn-new-library:hover { transform: translateY(-3px); box-shadow: 0 6px 16px rgba(30, 136, 229, 0.7); }
+
+         @media (max-width: 768px) { section.router-page > .router-page-hero { min-height: 80vh; padding-top: 6rem; } section.router-page > .router-page-hero h1 { font-size: 2.5rem; } section.router-page > .router-page-hero p.page-subtitle { font-size: 1.1rem; } }
+        @media (max-width: 480px) { section.router-page > .router-page-hero h1 { font-size: 2.2rem; } section.router-page > .router-page-hero p.page-subtitle { font-size: 1rem; } }
+
+        /* Hide specific headers/adjust padding for certain pages */
+        #kham-pha header.kham-pha-header,
+        #tin-tuc .tin-tuc-header,
+        #thu-vien .hero
+         { display: none !important; }
+         #kham-pha main.kham-pha-main,
+         #tin-tuc .tin-tuc-container,
+         #thu-vien .thu-vien-container { padding-top: 3rem; padding-bottom: 3rem; }
+
+        /* Sparkle & Ripple Effects */
+        .sparkle { position: absolute; width: 6px; height: 6px; background-color: #fff; border-radius: 50%; pointer-events: none; z-index: 9999; opacity: 1; transform: translate(-50%, -50%); animation: sparkle-fade 0.6s forwards; will-change: transform, opacity; }
+        @keyframes sparkle-fade { 0% { opacity: 1; transform: translate(-50%, -50%) scale(1); } 100% { opacity: 0; transform: translate(calc(-50% + var(--sparkle-x, 0px)), calc(-50% + var(--sparkle-y, 0px))) scale(0); } }
+        @media (pointer: coarse) { .sparkle { display: none; } }
+        .click-ripple { position: absolute; border-radius: 50%; background-color: rgba(255, 255, 255, 0.4); transform: translate(-50%, -50%) scale(0); animation: ripple-effect 0.7s ease-out; pointer-events: none; z-index: 9999; will-change: transform, opacity; width: 50px; height: 50px; }
+        @keyframes ripple-effect { to { transform: translate(-50%, -50%) scale(3); opacity: 0; } }
+
+        /* Chatbot Styles */
+        #chat-toggle-btn { position: fixed; bottom: 1.5rem; right: 1.5rem; background: linear-gradient(135deg, #8b5cf6, #6366f1); color: white; border: none; width: 55px; height: 55px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 4px 15px rgba(139, 92, 246, 0.4); z-index: 1000; transition: transform 0.2s ease-out, box-shadow 0.2s ease; }
+        #chat-toggle-btn:hover { transform: scale(1.1); box-shadow: 0 6px 20px rgba(139, 92, 246, 0.6); }
+        #chat-toggle-btn svg { width: 28px; height: 28px; }
+        #chat-window { position: fixed; bottom: calc(1.5rem + 65px); right: 1.5rem; width: 350px; max-width: calc(100vw - 3rem); height: 450px; max-height: calc(100vh - 3rem - 65px - 1rem); background-color: #111827; border: 1px solid #374151; border-radius: 0.75rem; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5); display: flex; flex-direction: column; overflow: hidden; z-index: 999; transform-origin: bottom right; transition: transform 0.3s ease-out, opacity 0.3s ease-out; opacity: 1; transform: scale(1); }
+        #chat-window.hidden { transform: scale(0); opacity: 0; pointer-events: none; }
+        #chat-header { background: linear-gradient(135deg, #1f2937, #374151); color: #e5e7eb; padding: 0.75rem 1rem; font-weight: 600; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #374151; flex-shrink: 0; }
+        #chat-close-btn { background: none; border: none; color: #9ca3af; font-size: 1.5rem; line-height: 1; cursor: pointer; padding: 0.2rem; }
+        #chat-close-btn:hover { color: #fff; }
+        #chat-messages { flex-grow: 1; overflow-y: auto; padding: 1rem; display: flex; flex-direction: column; gap: 0.75rem; }
+        .chat-message { padding: 0.6rem 0.9rem; border-radius: 0.75rem; max-width: 80%; line-height: 1.5; word-wrap: break-word; }
+        .chat-message.user { background-color: #6366f1; color: white; border-bottom-right-radius: 0.25rem; align-self: flex-end; margin-left: auto; }
+        .chat-message.bot { background-color: #374151; color: #e5e7eb; border-bottom-left-radius: 0.25rem; align-self: flex-start; margin-right: auto; }
+        .chat-message a { color: #a78bfa; text-decoration: underline; font-weight: 500; }
+        .chat-message a:hover { color: #c4b5fd; }
+        #chat-input-area { display: flex; padding: 0.75rem; border-top: 1px solid #374151; background-color: #1f2937; flex-shrink: 0; }
+        #chat-input { flex-grow: 1; padding: 0.6rem 0.8rem; border: 1px solid #4b5563; border-radius: 0.375rem; background-color: #111827; color: #e5e7eb; margin-right: 0.5rem; outline: none; }
+        #chat-input:focus { border-color: #8b5cf6; box-shadow: 0 0 0 2px rgba(139, 92, 246, 0.3); }
+        #chat-send-btn { padding: 0.6rem 1rem; background-color: #8b5cf6; color: white; border: none; border-radius: 0.375rem; cursor: pointer; font-weight: 500; transition: background-color 0.2s ease; }
+        #chat-send-btn:hover { background-color: #7c3aed; }
+
+        /* --- Footer Styles (Keep Original from Previous) --- */
+        footer.spa-footer {
+            width: 100%;
+            padding: 6rem 0 3rem 0;
+            background: linear-gradient(to bottom, #060818, #000000);
+            border-top: 1px solid #1f2937;
+            position: relative;
+            z-index: 10;
+            margin-top: 0;
+            overflow: hidden;
+        }
+        .footer-bg-pattern {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background-image: radial-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+            background-size: 20px 20px;
+            opacity: 0.5;
+            z-index: -1;
+            pointer-events: none;
+        }
+        footer.spa-footer .footer-content {
+            display: grid;
+            gap: 3rem;
+            position: relative;
+            z-index: 1;
+        }
+        @media (min-width: 640px) { footer.spa-footer .footer-content { grid-template-columns: repeat(2, 1fr); } }
+        @media (min-width: 1024px) { footer.spa-footer .footer-content { grid-template-columns: 1.5fr 1fr 1fr 1.2fr; gap: 3rem; } }
+        footer.spa-footer .footer-about { grid-column: span 2 / span 2; }
+        @media (min-width: 1024px) { footer.spa-footer .footer-about { grid-column: auto; } }
+        footer.spa-footer .footer-logo {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.7rem;
+            font-weight: 700;
+            font-size: 1.4rem;
+            color: #fff;
+            margin-bottom: 1.5rem;
+            text-decoration: none;
+            cursor: pointer;
+            transition: opacity 0.2s ease;
+        }
+        footer.spa-footer .footer-logo:hover { opacity: 0.85; }
+        footer.spa-footer .footer-logo svg {
+            width: 30px;
+            height: 30px;
+            color: #8b5cf6;
+        }
+        footer.spa-footer .footer-description {
+            color: #b0bec5;
+            margin-bottom: 1.8rem;
+            font-size: 0.95rem;
+            line-height: 1.7;
+            max-width: 380px;
+        }
+        footer.spa-footer .footer-social { display: flex; gap: 1.5rem; }
+        footer.spa-footer .footer-social a {
+            color: #90a4ae;
+            transition: color 0.2s ease, transform 0.2s ease;
+            display: inline-block;
+        }
+        footer.spa-footer .footer-social a:hover {
+            color: #8b5cf6;
+            transform: scale(1.1) translateY(-2px);
+        }
+        footer.spa-footer .footer-social svg { width: 24px; height: 24px; fill: currentColor; }
+        footer.spa-footer .footer-heading {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #e5e7eb;
+            margin-bottom: 1.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            position: relative;
+            padding-bottom: 0.7rem;
+            display: inline-block;
+        }
+        footer.spa-footer .footer-heading::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 40px;
+            height: 3px;
+            background: linear-gradient(90deg, #8b5cf6, #6366f1);
+            border-radius: 1px;
+        }
+        footer.spa-footer .footer-links { list-style: none; padding: 0; }
+        footer.spa-footer .footer-links li { margin-bottom: 0.85rem; }
+        footer.spa-footer .footer-links a {
+            color: #b0bec5;
+            text-decoration: none;
+            transition: color 0.2s ease, padding-left 0.2s ease, background-color 0.2s ease;
+            font-size: 0.95rem;
+            cursor: pointer;
+            display: inline-block;
+            position: relative;
+            padding: 0.2rem 0;
+        }
+        footer.spa-footer .footer-links a::before {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 1px;
+            background-color: #8b5cf6;
+            transition: width 0.3s ease;
+        }
+        footer.spa-footer .footer-links a:hover {
+            color: #fff;
+            padding-left: 0;
+        }
+        footer.spa-footer .footer-links a:hover::before {
+            width: 100%;
+        }
+        footer.spa-footer .footer-contact-link {
+            display: flex;
+            align-items: center;
+            color: #b0bec5;
+            margin-top: 1rem;
+            text-decoration: none;
+            font-size: 0.95rem;
+            transition: color 0.2s ease;
+        }
+        footer.spa-footer .footer-contact-link svg {
+            margin-right: 0.8rem;
+            width: 18px; height: 18px;
+            flex-shrink: 0;
+            color: #8b5cf6;
+        }
+        footer.spa-footer .footer-contact-link:hover { color: #fff; }
+        footer.spa-footer .footer-bottom {
+            margin-top: 4rem;
+            padding-top: 2.5rem;
+            border-top: 1px solid #30363d;
+            text-align: center;
+            color: #718096;
+            font-size: 0.9rem;
+        }
+        footer.spa-footer .footer-bottom p { line-height: 1.6; margin-bottom: 0.5rem;}
+        .footer-bottom-link {
+            color: #90a4ae;
+            text-decoration: none;
+            transition: color 0.2s ease;
+            margin: 0 0.5rem;
+        }
+        .footer-bottom-link:hover {
+            color: #8b5cf6;
+            text-decoration: underline;
+        }
+        /* --- End Footer Styles --- */
+
+        /* --- Modal Styles (Keep Original from Previous) --- */
+        .modal-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.75); /* Darker backdrop */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1050; /* Ensure it's above other content */
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0s linear 0.3s;
+            backdrop-filter: blur(5px); /* Optional blur effect */
+        }
+
+        .modal-container.visible {
+            opacity: 1;
+            visibility: visible;
+            transition: opacity 0.3s ease;
+        }
+
+        .modal-content {
+            background: var(--new-secondary, #1a1f4b); /* Match Kham Pha card style */
+            color: var(--new-text, #ffffff);
+            padding: 2.5rem;
+            border-radius: 15px;
+            max-width: 700px;
+            width: 90%;
+            position: relative;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+            max-height: 85vh; /* Limit height */
+            overflow-y: auto; /* Allow scrolling if content is long */
+            transform: scale(0.9);
+            transition: transform 0.3s ease;
+        }
+
+        .modal-container.visible .modal-content {
+            transform: scale(1);
+        }
+
+        .modal-close-btn {
+            position: absolute;
+            top: 1rem;
+            right: 1.5rem;
+            background: none;
+            border: none;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 2.2rem;
+            font-weight: bold;
+            line-height: 1;
+            cursor: pointer;
+            padding: 0;
+            transition: color 0.2s ease;
+        }
+
+        .modal-close-btn:hover {
+            color: var(--new-highlight, #ff6b6b);
+        }
+
+        #modal-item-title {
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+            color: var(--new-highlight, #ff6b6b); /* Match card title color */
+            font-family: inherit; /* Match Kham Pha font */
+        }
+
+        #modal-item-description {
+            font-size: 1rem;
+            line-height: 1.7;
+            color: var(--new-text, #ffffff);
+            font-family: inherit; /* Match Kham Pha font */
+        }
+
+        #modal-item-description p {
+            margin-bottom: 1rem;
+        }
+        #modal-item-description strong {
+            color: var(--new-accent, #7b52ab);
+        }
+        /* --- End Modal Styles --- */
+
+    </style>
+</head>
+<body>
+    <div class="stars-container"> <div class="stars stars-small"></div> <div class="stars stars-medium"></div> <div class="stars stars-large"></div> </div>
+
+    <header class="spa-header">
+        <div class="container">
+            <div class="navbar">
+                <a data-target="hero" class="logo nav-trigger">
+                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2z"/><path d="M12 12a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/><path d="M19.07 4.93a10 10 0 0 0-14.14 0"/><path d="M4.93 19.07a10 10 0 0 0 14.14 0"/></svg>
+                    <span>Khám Phá Vũ Trụ</span>
+                </a>
+                <nav class="nav-links">
+                    <a data-target="hero" class="nav-trigger"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>Trang Chủ</a>
+                    <a data-target="khai-quat" class="nav-trigger"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path></svg>Khái Quát</a>
+                    <a data-target="kham-pha" class="nav-trigger"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>Khám Phá</a>
+                    <a data-target="game-thien-van" class="nav-trigger"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path><line x1="12" y1="16" x2="12.01" y2="16"></line><line x1="8" y1="16" x2="8.01" y2="16"></line><line x1="16" y1="16" x2="16.01" y2="16"></line></svg>Game</a>
+                    <a data-target="tin-tuc" class="nav-trigger"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>Tin Tức</a>
+                    <a data-target="thu-vien" class="nav-trigger"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>Thư Viện</a>
+                </nav>
+                <button class="mobile-menu-btn" aria-label="Mở menu" aria-expanded="false">
+                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/></svg>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- === HOMEPAGE VIEW (with its own background) === -->
+    <div id="home-view">
+        <section class="hero" id="hero">
+            <div class="hero-bg">
+                <img src="https://images.unsplash.com/photo-1538370965046-79c0d6907d47?q=80&w=1920&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Hình nền vũ trụ sâu thẳm với tinh vân và sao">
+            </div>
+            <div class="hero-overlay"></div>
+            <div class="container">
+                <div class="hero-content">
+                    <h1 class="hero-title animated-gradient-text">Hành Trình Vô Tận Qua Vũ Trụ</h1>
+                    <p class="hero-description">Khám phá những bí ẩn, chiêm ngưỡng vẻ đẹp ngoạn mục và cập nhật kiến thức mới nhất về không gian bao la.</p>
+                    <div class="hero-buttons">
+                        <button data-target="khai-quat" class="btn btn-primary btn-pulse nav-trigger">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a10 10 0 1 0 10 10A10.011 10.011 0 0 0 12 2zm1 15h-2v-6h2zm0-8h-2V7h2z"/></svg>
+                            Bắt Đầu Ngay
+                        </button>
+                        <button data-target="kham-pha" class="btn btn-outline nav-trigger">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M16.2 7.8l-2.4 7.4-7.4-2.4 7.4-7.4 2.4 7.4z"/></svg>
+                            Khám Phá Sâu
+                        </button>
+                    </div>
+                     <div class="scroll-down-indicator">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 5V19" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M19 12L12 19L5 12" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                     </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="featured-topics enhanced-featured">
+            <div class="container">
+                <h2 class="section-title">Khám Phá Các Cổng Thông Tin Vũ Trụ</h2>
+                <p class="section-subtitle">Chọn một chủ đề để bắt đầu hành trình khám phá của bạn.</p>
+                <div class="topic-grid enhanced-topic-grid">
+                    <button data-target="khai-quat" class="topic-card enhanced-topic-card nav-trigger" data-topic="khai-quat">
+                        <div class="topic-icon"> <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M12 7v5l3 3"/></svg> </div>
+                        <h3 class="topic-title">Lịch Sử & Khái Niệm</h3> <p class="topic-description">Tìm hiểu nền tảng, lịch sử phát triển và các khái niệm cốt lõi của thiên văn học.</p> <span class="btn btn-small btn-outline">Xem Chi Tiết</span>
+                    </button>
+                     <button data-target="kham-pha" class="topic-card enhanced-topic-card nav-trigger" data-topic="kham-pha">
+                        <div class="topic-icon"> <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg> </div>
+                        <h3 class="topic-title">Hành Tinh & Thiên Hà</h3> <p class="topic-description">Du hành qua Hệ Mặt Trời, khám phá các vì sao, tinh vân và những thiên hà xa xôi.</p> <span class="btn btn-small btn-outline">Xem Chi Tiết</span>
+                     </button>
+                     <button data-target="game-thien-van" class="topic-card enhanced-topic-card nav-trigger" data-topic="game">
+                        <div class="topic-icon"> <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path><line x1="12" y1="16" x2="12.01" y2="16"></line><line x1="8" y1="16" x2="8.01" y2="16"></line><line x1="16" y1="16" x2="16.01" y2="16"></line></svg> </div>
+                        <h3 class="topic-title">Trò Chơi Thiên Văn</h3> <p class="topic-description">Thử thách kiến thức vũ trụ của bạn qua các trò chơi tương tác vui nhộn và bổ ích.</p> <span class="btn btn-small btn-outline">Chơi Ngay</span>
+                     </button>
+                     <button data-target="tin-tuc" class="topic-card enhanced-topic-card nav-trigger" data-topic="tin-tuc">
+                        <div class="topic-icon"> <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg> </div>
+                        <h3 class="topic-title">Tin Tức & Sự Kiện</h3> <p class="topic-description">Cập nhật những khám phá mới nhất, hiện tượng thiên văn và các sự kiện nổi bật.</p> <span class="btn btn-small btn-outline">Đọc Tin Mới</span>
+                     </button>
+                     <button data-target="thu-vien" class="topic-card enhanced-topic-card nav-trigger" data-topic="thu-vien">
+                        <div class="topic-icon"> <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg> </div>
+                        <h3 class="topic-title">Thư Viện Đa Phương Tiện</h3> <p class="topic-description">Chiêm ngưỡng bộ sưu tập hình ảnh và video vũ trụ chất lượng cao, đầy cảm hứng.</p> <span class="btn btn-small btn-outline">Xem Thư Viện</span>
+                     </button>
+                    <div class="topic-card enhanced-topic-card highlight-card-new" data-topic="highlight">
+                        <div class="topic-icon"> <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg> </div>
+                        <h3 class="topic-title">Cộng Đồng Yêu Thiên Văn</h3> <p class="topic-description">Kết nối, chia sẻ đam mê và thảo luận về vũ trụ cùng những người cùng sở thích (Sắp ra mắt).</p> <span class="btn btn-small btn-primary disabled">Tham Gia</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+    <!-- === END OF HOMEPAGE VIEW === -->
+
+
+    <!-- === ROUTER OUTLET FOR OTHER PAGES === -->
+    <main id="page-router-outlet" style="display: none;">
+
+        <!-- === START: KHAI QUAT PAGE (REDESIGNED) === -->
+        <section id="khai-quat" class="router-page">
+            <!-- Hero Section for Khai Quat Page -->
+            <section class="router-page-hero">
+                <div class="container">
+                    <h1 class="hero-title animated-gradient-text" style="font-size: 3.5rem; line-height: 1.2;">Khái Quát Về Thiên Văn Học</h1>
+                    <p class="page-subtitle" style="font-size: 1.3rem; opacity: 0.95;">Hành trình xuyên thời gian, khám phá lịch sử hình thành, các nhánh nghiên cứu và vai trò cốt lõi của ngành khoa học vũ trụ.</p>
+                    <a href="#lich-su" class="btn btn-outline hover-glow nav-trigger" data-target="khai-quat" data-subtarget="#lich-su" style="margin-top: 1.5rem;">
+                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M19 12l-7 7-7-7"/></svg>
+                         Bắt đầu khám phá
+                    </a>
+                </div>
+            </section>
+
+            <!-- Main Content Container for Khai Quat Page -->
+            <div class="container">
+
+                <!-- Section 1: Lịch Sử (History) - Redesigned with Enhanced Timeline -->
+                <div class="content-section redesigned-section v2" id="lich-su" style="padding-top: 5rem; padding-bottom: 5rem;">
+                    <h2 class="redesigned-section-title v2">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M12 7v5l3 3"/></svg>
+                        Dòng Chảy Lịch Sử
+                    </h2>
+                    <p class="redesigned-section-subtitle v2">Từ quan sát sơ khai đến kỷ nguyên khám phá không gian.</p>
+
+                    <div class="enhanced-timeline-wrapper">
+                        <div class="enhanced-timeline">
+
+                            <div class="timeline-entry" style="--delay: 0;">
+                                <div class="timeline-point"></div>
+                                <div class="timeline-entry-content">
+                                    <!-- Card chính -->
+                                    <div class="timeline-card-container">
+                                        <div class="timeline-card">
+                                            <img src="https://images.unsplash.com/photo-1517976487492-5750f3195933?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80" alt="Stonehenge dưới bầu trời sao" loading="lazy">
+                                            <div class="card-content">
+                                                <h3>Thời Cổ Đại</h3>
+                                                <p>Quan sát bầu trời, xây dựng lịch, mô hình Địa tâm (Aristotle, Ptolemy).</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- Thông tin bổ sung (Đối diện card) -->
+                                    <div class="timeline-extra-info">
+                                        <h4>Điểm nhấn:</h4>
+                                        <ul>
+                                            <li>Babylon: Ghi chép nhật thực, nguyệt thực.</li>
+                                            <li>Ai Cập: Canh chỉnh Kim Tự Tháp theo sao.</li>
+                                            <li>Hy Lạp: Tính chu vi Trái Đất (Eratosthenes).</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="timeline-entry" style="--delay: 1;">
+                                <div class="timeline-point"></div>
+                                 <div class="timeline-entry-content">
+                                    <!-- Thông tin bổ sung -->
+                                    <div class="timeline-extra-info">
+                                        <h4>Nhân vật chính:</h4>
+                                        <ul>
+                                            <li>Nicolaus Copernicus: Nhà thiên văn học Ba Lan.</li>
+                                            <li>Tác phẩm: "De Revolutionibus Orbium Coelestium".</li>
+                                            <li>Thách thức: Mô hình Địa tâm đã tồn tại hàng thế kỷ.</li>
+                                        </ul>
+                                    </div>
+                                     <!-- Card chính -->
+                                     <div class="timeline-card-container">
+                                        <div class="timeline-card">
+                                            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/f2/Nikolaus_Kopernikus.jpg/800px-Nikolaus_Kopernikus.jpg" alt="Chân dung Nicolaus Copernicus" loading="lazy">
+                                            <div class="card-content">
+                                                <h3>Thời Phục Hưng</h3>
+                                                <p>Copernicus đề xuất mô hình Nhật tâm, khởi đầu cách mạng khoa học.</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="timeline-entry" style="--delay: 2;">
+                                <div class="timeline-point"></div>
+                                 <div class="timeline-entry-content">
+                                    <!-- Card chính -->
+                                    <div class="timeline-card-container">
+                                        <div class="timeline-card">
+                                             <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/Justus_Sustermans_-_Portrait_of_Galileo_Galilei%2C_1636.jpg/800px-Justus_Sustermans_-_Portrait_of_Galileo_Galilei%2C_1636.jpg" alt="Chân dung Galileo Galilei" loading="lazy">
+                                            <div class="card-content">
+                                                <h3>Thế Kỷ 17</h3>
+                                                <p>Kepler và định luật chuyển động. Galileo dùng kính thiên văn.</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                     <!-- Thông tin bổ sung -->
+                                     <div class="timeline-extra-info">
+                                        <h4>Khám phá quan trọng:</h4>
+                                        <ul>
+                                            <li>Kepler: Quỹ đạo elip của hành tinh.</li>
+                                            <li>Galileo: Vết đen Mặt Trời, pha của Sao Kim, 4 vệ tinh Sao Mộc.</li>
+                                            <li>Củng cố mạnh mẽ mô hình Nhật tâm.</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="timeline-entry" style="--delay: 3;">
+                                <div class="timeline-point"></div>
+                                 <div class="timeline-entry-content">
+                                      <!-- Thông tin bổ sung -->
+                                      <div class="timeline-extra-info">
+                                        <h4>Tiến bộ kỹ thuật:</h4>
+                                        <ul>
+                                            <li>Newton: Giải thích lực hấp dẫn.</li>
+                                            <li>Kính thiên văn phản xạ.</li>
+                                            <li>Quang phổ học: Phân tích ánh sáng sao.</li>
+                                            <li>Nhiếp ảnh thiên văn.</li>
+                                        </ul>
+                                    </div>
+                                    <!-- Card chính -->
+                                    <div class="timeline-card-container">
+                                        <div class="timeline-card">
+                                             <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/39/GodfreyKneller-IsaacNewton-1689.jpg/800px-GodfreyKneller-IsaacNewton-1689.jpg" alt="Chân dung Isaac Newton" loading="lazy">
+                                            <div class="card-content">
+                                                <h3>Sau Newton</h3>
+                                                <p>Định luật Vạn vật hấp dẫn. Kỹ thuật quan sát phát triển.</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                             <div class="timeline-entry" style="--delay: 4;">
+                                <div class="timeline-point"></div>
+                                 <div class="timeline-entry-content">
+                                     <!-- Card chính -->
+                                    <div class="timeline-card-container">
+                                        <div class="timeline-card">
+                                             <img src="https://th.bing.com/th/id/OIP.BgnHKzOyVSMAEmivrFjTPAHaF7?rs=1&pid=ImgDetMain" alt="Trạm Vũ trụ Quốc tế ISS bay trên Trái Đất" loading="lazy">
+                                            <div class="card-content">
+                                                <h3>Kỷ Nguyên Không Gian</h3>
+                                                <p>Vệ tinh, thám hiểm Mặt Trăng, kính thiên văn không gian (Hubble, Webb).</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                     <!-- Thông tin bổ sung -->
+                                     <div class="timeline-extra-info">
+                                         <h4>Thành tựu nổi bật:</h4>
+                                        <ul>
+                                            <li>Sputnik 1 (1957): Vệ tinh nhân tạo đầu tiên.</li>
+                                            <li>Apollo 11 (1969): Con người đặt chân lên Mặt Trăng.</li>
+                                            <li>Hubble, JWST: Hình ảnh vũ trụ sâu thẳm.</li>
+                                            <li>Voyager: Thăm dò ngoài Hệ Mặt Trời.</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section 2: Các Nhánh Chính (Main Branches) - Enhanced Cards V2 -->
+                <div class="content-section redesigned-section v2 section-highlight-enhanced v2" id="cac-nhanh" style="padding-top: 5rem; padding-bottom: 6rem;">
+                    <h2 class="redesigned-section-title v2">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                        Các Lĩnh Vực Nghiên Cứu
+                   </h2>
+                    <p class="redesigned-section-subtitle v2">Khám phá sự đa dạng trong các nhánh chuyên sâu của thiên văn học hiện đại.</p>
+
+                   <div class="branch-grid-wrapper">
+                       <div class="branch-grid enhanced-branch-grid v2">
+                            <!-- Card 1 -->
+                            <div class="branch-card enhanced-branch-card v2">
+                                 <div class="card-icon-bg v2"><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg></div>
+                                <h3>Vật lý thiên văn</h3>
+                                <p>Nghiên cứu bản chất vật lý: độ sáng, nhiệt độ, thành phần hoá học,...</p>
+                            </div>
+                            <!-- Card 2 -->
+                            <div class="branch-card enhanced-branch-card v2">
+                                <div class="card-icon-bg v2"><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.21 15.89A10 10 0 1 1 8 2.83"/><path d="M22 12A10 10 0 0 0 12 2v10z"/></svg></div>
+                                <h3>Vũ trụ học</h3>
+                                <p>Nghiên cứu nguồn gốc, tiến hóa, cấu trúc và số phận của vũ trụ.</p>
+                            </div>
+                            <!-- Card 3 -->
+                            <div class="branch-card enhanced-branch-card v2">
+                                 <div class="card-icon-bg v2"><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 0-14.14 0"/><path d="M4.93 19.07a10 10 0 0 0 14.14 0"/><path d="M12 2a10 10 0 0 0-8.07 4.93"/><path d="M12 22a10 10 0 0 0 8.07-4.93"/><path d="M2 12a10 10 0 0 0 4.93 8.07"/><path d="M22 12a10 10 0 0 0-4.93-8.07"/></svg></div>
+                                <h3>Thiên văn hành tinh</h3>
+                                <p>Nghiên cứu hành tinh, mặt trăng, tiểu hành tinh, sao chổi, ngoại hành tinh.</p>
+                            </div>
+                            <!-- Card 4 -->
+                            <div class="branch-card enhanced-branch-card v2">
+                                 <div class="card-icon-bg v2"><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L9 8.5l-7 1 5 4.5-1.5 6.5L12 17l6.5 3.5L17 14l5-4.5-7-1z"/></svg></div>
+                                <h3>Thiên văn học sao</h3>
+                                <p>Nghiên cứu sự hình thành, vòng đời, cấu trúc và tiến hóa của sao.</p>
+                            </div>
+                            <!-- Card 5 -->
+                            <div class="branch-card enhanced-branch-card v2">
+                                 <div class="card-icon-bg v2"><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M7 12a5 5 0 1 1 10 0 5 5 0 1 1-10 0z"/><path d="M12 1v2"/><path d="M12 21v2"/><path d="m4.22 4.22 1.42 1.42"/><path d="m18.36 18.36 1.42 1.42"/><path d="M1 12h2"/><path d="M21 12h2"/><path d="m4.22 19.78 1.42-1.42"/><path d="m18.36 5.64 1.42-1.42"/></svg></div>
+                                <h3>Thiên văn học thiên hà</h3>
+                                <p>Nghiên cứu cấu trúc, thành phần, động lực học của Dải Ngân Hà.</p>
+                            </div>
+                            <!-- Card 6 -->
+                            <div class="branch-card enhanced-branch-card v2">
+                                 <div class="card-icon-bg v2"><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/></svg></div>
+                                <h3>Thiên văn học ngoài thiên hà</h3>
+                                <p>Nghiên cứu các vật thể ngoài Dải Ngân Hà (thiên hà khác, cụm,...).</p>
+                            </div>
+                            <!-- Card 7 -->
+                            <div class="branch-card enhanced-branch-card v2">
+                                 <div class="card-icon-bg v2"><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path></svg></div>
+                                <h3>Thiên văn học quan sát</h3>
+                                <p>Thu thập, xử lý dữ liệu từ kính thiên văn và các thiết bị quan sát.</p>
+                            </div>
+                            <!-- Card 8 -->
+                            <div class="branch-card enhanced-branch-card v2">
+                                  <div class="card-icon-bg v2"><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg></div>
+                                <h3>Thiên văn học lý thuyết</h3>
+                                <p>Sử dụng mô hình toán học, máy tính để mô tả và dự đoán hiện tượng.</p>
+                            </div>
+                       </div>
+                   </div>
+                </div>
+
+                <!-- Section 3: Tầm Quan Trọng (Importance) - Redesigned with Cards V3 -->
+                <div class="content-section redesigned-section v2" id="tam-quan-trong" style="padding-top: 5rem; padding-bottom: 6rem; background: linear-gradient(180deg, #111827 0%, #0a0e29 100%);">
+                    <h2 class="redesigned-section-title v2">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+                        Giá Trị Cốt Lõi
+                    </h2>
+                    <p class="redesigned-section-subtitle v2">Thiên văn học không chỉ là khoa học, mà còn là nguồn cảm hứng và động lực phát triển.</p>
+
+                    <div class="importance-grid">
+
+                        <div class="importance-card">
+                            <div class="importance-card-icon">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path></svg>
+                            </div>
+                            <div class="importance-card-content">
+                                <h3>Hiểu Biết Nền Tảng</h3>
+                                <p>Giải đáp nguồn gốc vũ trụ, Trái Đất, sự sống và vị trí của chúng ta trong bức tranh vĩ đại.</p>
+                            </div>
+                        </div>
+
+                        <div class="importance-card">
+                            <div class="importance-card-icon">
+                                 <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18.37 2.63 14 7l-1.59-1.59a2 2 0 0 0-2.82 0L8 7l-4.37-4.37a2 2 0 0 0-2.82 0L1 5.18a2 2 0 0 0 0 2.82L5.18 12l-2.55 2.55a2 2 0 0 0 0 2.82L5.18 20a2 2 0 0 0 2.82 0L12 15.82l4 4.18h.01a2 2 0 0 0 2.82 0L21.37 18a2 2 0 0 0 0-2.82L17 11l4.37-4.37a2 2 0 0 0 0-2.82L19.82 1a2 2 0 0 0-2.82 0L12.82 5.18 11 7l1.59 1.59a2 2 0 0 0 2.82 0L17 7l4.37-4.37a2.12 2.12 0 1 0-3-3Z"/></svg>
+                            </div>
+                            <div class="importance-card-content">
+                                <h3>Động Lực Công Nghệ</h3>
+                                <p>Thúc đẩy phát triển quang học, cảm biến, vật liệu, điện toán, viễn thông, và nhiều lĩnh vực khác.</p>
+                            </div>
+                        </div>
+
+                        <div class="importance-card">
+                            <div class="importance-card-icon">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22a7 7 0 0 0 7-7h-2a5 5 0 0 1-5 5v2z"/><path d="M5 12H3a7 7 0 0 0 7 7v-2a5 5 0 0 1-5-5z"/><path d="M12 5V3a7 7 0 0 0-7 7h2a5 5 0 0 1 5-5z"/><path d="M19 12h2a7 7 0 0 0-7-7v2a5 5 0 0 1 5 5z"/></svg>
+                            </div>
+                            <div class="importance-card-content">
+                                <h3>Kiểm Chứng Vật Lý</h3>
+                                <p>Vũ trụ là phòng thí nghiệm tự nhiên để kiểm tra các lý thuyết vật lý trong điều kiện khắc nghiệt.</p>
+                            </div>
+                        </div>
+
+                        <div class="importance-card">
+                            <div class="importance-card-icon">
+                                 <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.5 12a9.5 9.5 0 1 1-19 0 9.5 9.5 0 0 1 19 0Z"/><path d="M12 2a7 7 0 1 0 10 10"/></svg>
+                            </div>
+                             <div class="importance-card-content">
+                                <h3>Nhận Thức Hành Tinh</h3>
+                                <p>Hiểu về biến đổi khí hậu, địa chất và tiềm năng tồn tại sự sống ngoài Trái Đất.</p>
+                            </div>
+                        </div>
+
+                        <div class="importance-card">
+                            <div class="importance-card-icon">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 6 4 6-4 6-4 6Z"/><path d="M6 12h12"/><path d="m12 18 4-6-4-6"/></svg>
+                            </div>
+                             <div class="importance-card-content">
+                                <h3>Nguồn Cảm Hứng</h3>
+                                <p>Khơi dậy đam mê khoa học, trí tưởng tượng, tư duy phản biện và sự kết nối toàn cầu.</p>
+                            </div>
+                        </div>
+
+                        <div class="importance-card placeholder">
+                             <div class="importance-card-icon">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>
+                            </div>
+                             <div class="importance-card-content">
+                                <h3>Tương Lai Nhân Loại</h3>
+                                <p>Tìm kiếm tài nguyên, khám phá không gian và đảm bảo sự tồn tại lâu dài của loài người.</p>
+                            </div>
+                        </div>
+
+                    </div> <!-- End .importance-grid -->
+                </div> <!-- End #tam-quan-trong section -->
+            </div> <!-- End .container for Khai Quat Page Content -->
+        </section>
+        <!-- === END: KHAI QUAT PAGE (REDESIGNED) === -->
+
+        <section id="kham-pha" class="router-page">
+            <section class="router-page-hero">
+                 <div class="container">
+                    <h1>Hành Trình Khám Phá Vũ Trụ</h1>
+                    <p class="page-subtitle">Từ Hệ Mặt Trời đến các thiên hà xa xôi, cùng các công cụ tương tác và kiến thức chuyên sâu về Sao, Tinh Vân, Thiên Hà.</p>
+                 </div>
+            </section>
+            <main class="kham-pha-main">
+                <section class="section" id="intro">
+                    <h2 class="section-title">Vũ Trụ Kỳ Diệu</h2>
+                    <p>Vũ trụ là một không gian vô tận đầy bí ẩn và kỳ quan. Từ những ngôi sao lấp lánh đến những tinh vân rực rỡ và thiên hà bao la, mỗi góc của vũ trụ đều chứa đựng những câu chuyện đáng kinh ngạc đang chờ được khám phá.</p>
+                    <div class="fact-container">
+                        <div class="fact"><div class="fact-number">13.8</div><div class="fact-text">Tỷ năm tuổi của vũ trụ</div></div>
+                        <div class="fact"><div class="fact-number">100+</div><div class="fact-text">Tỷ thiên hà trong vũ trụ quan sát được</div></div>
+                        <div class="fact"><div class="fact-number">5000+</div><div class="fact-text">Ngoại hành tinh đã xác nhận</div></div>
+                        <div class="fact"><div class="fact-number">~70%</div><div class="fact-text">Vũ trụ là năng lượng tối</div></div>
+                    </div>
+                </section>
+                <div class="panorama">
+                    <div class="panorama-text">
+                        <h3 class="panorama-title">Vẻ Đẹp Vô Tận Của Vũ Trụ</h3>
+                        <p class="panorama-subtitle">Mỗi ngôi sao là một thế giới, mỗi thiên hà là một vũ trụ riêng</p>
+                    </div>
+                </div>
+                <section class="section" id="stars">
+                    <h2 class="section-title">Những Ngôi Sao Kỳ Diệu</h2>
+                    <p>Ngôi sao là những khối cầu khí nóng khổng lồ tỏa sáng nhờ phản ứng nhiệt hạch. Chúng có nhiều kích thước, màu sắc và tuổi thọ khác nhau, tạo nên bức tranh đa dạng của bầu trời đêm.</p>
+                    <div class="card-container">
+                        <div class="card">
+                            <img src="https://images.unsplash.com/photo-1534447677768-be436bb09401?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwxfDB8MXxyYW5kb218MHx8c3VufHx8fHx8MTYyNjQ1NzYwMQ&ixlib=rb-1.2.1&q=80&w=400" alt="Mặt Trời" class="card-image" loading="lazy">
+                            <div class="card-content"> <h3 class="card-title">Mặt Trời</h3> <p class="card-text">Mặt Trời là ngôi sao gần Trái Đất nhất, cung cấp năng lượng cho sự sống trên hành tinh của chúng ta. Đây là một sao lùn vàng với nhiệt độ bề mặt khoảng 5.500°C.</p> <a href="#" class="btn-new" data-modal-id="sun">Tìm hiểu thêm</a> </div>
+                        </div>
+                        <div class="card">
+                            <img src="https://th.bing.com/th/id/R.905e70b6c02aaee533065fe0371d94dc?rik=dpvn4bLt8GpEeA&riu=http%3a%2f%2fwww.wisdom-square.com%2fimages%2fSiriusa.jpg&ehk=%2fuRONuQ9wN92OKkN%2f1YxhKyKtElXuTViKWynZzjZDIA%3d&risl=&pid=ImgRaw&r=0" alt="Sirius" class="card-image" loading="lazy">
+                            <div class="card-content"> <h3 class="card-title">Sirius</h3> <p class="card-text">Sirius, còn được gọi là Sao Thiên Lang, là ngôi sao sáng nhất trên bầu trời đêm. Đây là một hệ thống sao đôi cách Trái Đất khoảng 8.6 năm ánh sáng.</p> <a href="#" class="btn-new" data-modal-id="sirius">Tìm hiểu thêm</a> </div>
+                        </div>
+                        <div class="card">
+                             <img src="https://th.bing.com/th/id/OIP.ZTYzmM6MQ7bZaq9uudPQMgHaEP?rs=1&pid=ImgDetMain" alt="Betelgeuse" class="card-image" loading="lazy">
+                             <div class="card-content"> <h3 class="card-title">Betelgeuse</h3> <p class="card-text">Betelgeuse là một siêu khổng lồ đỏ trong chòm sao Orion. Nó lớn đến mức nếu thay thế Mặt Trời, nó sẽ mở rộng vượt quá quỹ đạo của sao Hỏa.</p> <a href="#" class="btn-new" data-modal-id="betelgeuse">Tìm hiểu thêm</a> </div>
+                        </div>
+                    </div>
+                </section>
+                <section class="section" id="nebulae">
+                     <h2 class="section-title">Tinh Vân Huyền Ảo</h2>
+                     <p>Tinh vân là những đám mây khí và bụi khổng lồ trong không gian. Chúng có thể là nơi sinh ra các ngôi sao mới hoặc là tàn dư của những ngôi sao đã chết. Với hình dạng và màu sắc đa dạng, tinh vân là một trong những cảnh tượng ngoạn mục nhất của vũ trụ.</p>
+                     <div class="card-container">
+                         <div class="card">
+                             <img src="https://i.ytimg.com/vi/rWfQFyzO_iA/hqdefault.jpg" alt="Tinh Vân Orion" class="card-image" loading="lazy">
+                             <div class="card-content"> <h3 class="card-title">Tinh Vân Orion</h3> <p class="card-text">Tinh vân Orion là một trong những tinh vân sáng nhất trên bầu trời và có thể nhìn thấy bằng mắt thường. Đây là một vùng sinh sao khổng lồ cách Trái Đất khoảng 1.344 năm ánh sáng.</p> <a href="#" class="btn-new" data-modal-id="orion-nebula">Tìm hiểu thêm</a> </div>
+                         </div>
+                         <div class="card">
+                             <img src="https://th.bing.com/th/id/OIP.dWMODdJAs16pbwykeBzzEAHaFj?rs=1&pid=ImgDetMain" alt="Tinh Vân Con Mắt Mèo" class="card-image" loading="lazy">
+                             <div class="card-content"> <h3 class="card-title">Tinh Vân Con Mắt Mèo</h3> <p class="card-text">Tinh vân Con Mắt Mèo (NGC 6543) là một tinh vân hành tinh nổi tiếng với cấu trúc phức tạp và màu sắc rực rỡ. Nó được hình thành từ các lớp vật chất được phóng ra từ một ngôi sao đang chết.</p> <a href="#" class="btn-new" data-modal-id="cats-eye-nebula">Tìm hiểu thêm</a> </div>
+                         </div>
+                         <div class="card">
+                             <img src="https://i.medyafaresi.com/2/1280/720/storage/old/files/2020/6/22/943203/nasadan-kelebek-nebula-paylasimi_vJdp.jpg" alt="Tinh Vân Cánh Bướm" class="card-image" loading="lazy">
+                             <div class="card-content"> <h3 class="card-title">Tinh Vân Cánh Bướm</h3> <p class="card-text">Tinh vân Cánh Bướm (NGC 6302) là một tinh vân hành tinh lưỡng cực với hình dạng giống cánh bướm. Nhiệt độ trung tâm của nó có thể lên tới 250.000°C, làm cho nó trở thành một trong những vật thể nóng nhất trong thiên hà.</p> <a href="#" class="btn-new" data-modal-id="butterfly-nebula">Tìm hiểu thêm</a> </div>
+                         </div>
+                     </div>
+                </section>
+                <section class="section" id="galaxies">
+                     <h2 class="section-title">Thiên Hà Bao La</h2>
+                     <p>Thiên hà là những tập hợp khổng lồ gồm sao, hệ sao, tinh vân, bụi và khí, được giữ lại với nhau bởi lực hấp dẫn. Vũ trụ có hàng trăm tỷ thiên hà, mỗi thiên hà chứa hàng trăm tỷ ngôi sao.</p>
+                     <div class="card-container">
+                         <div class="card">
+                             <img src="https://th.bing.com/th/id/OIP.H1FEXXgTz7jihGJZZuPQiQHaEK?rs=1&pid=ImgDetMain" alt="Dải Ngân Hà" class="card-image" loading="lazy">
+                             <div class="card-content"> <h3 class="card-title">Dải Ngân Hà</h3> <p class="card-text">Dải Ngân Hà là thiên hà hình xoắn ốc nơi Trái Đất sinh sống. Nó chứa khoảng 200 tỷ ngôi sao và có đường kính khoảng 100.000 năm ánh sáng.</p> <a href="#" class="btn-new" data-modal-id="milky-way">Tìm hiểu thêm</a> </div>
+                         </div>
+                         <div class="card">
+                             <img src="https://th.bing.com/th/id/OIP.v1i1ziMkKBGc--kc_feyAQHaEL?rs=1&pid=ImgDetMain" alt="Thiên Hà Andromeda" class="card-image" loading="lazy">
+                             <div class="card-content"> <h3 class="card-title">Thiên Hà Andromeda</h3> <p class="card-text">Thiên hà Andromeda (M31) là thiên hà xoắn ốc lớn nhất trong Nhóm Thiên hà Địa phương và là thiên hà lớn nhất gần Dải Ngân Hà. Nó đang tiến về phía chúng ta và sẽ va chạm với Dải Ngân Hà trong khoảng 4.5 tỷ năm nữa.</p> <a href="#" class="btn-new" data-modal-id="andromeda">Tìm hiểu thêm</a> </div>
+                         </div>
+                         <div class="card">
+                             <img src="https://th.bing.com/th/id/OIP.1IR8dfiLU5VvbMIL7BNyUwHaEK?rs=1&pid=ImgDetMain" alt="Thiên Hà Sombrero" class="card-image" loading="lazy">
+                             <div class="card-content"> <h3 class="card-title">Thiên Hà Sombrero</h3> <p class="card-text">Thiên hà Sombrero (M104) nổi bật với vành đai bụi tối màu và phình trung tâm lớn, trông giống chiếc mũ Sombrero.</p> <a href="#" class="btn-new" data-modal-id="sombrero">Tìm hiểu thêm</a> </div>
+                         </div>
+                     </div>
+                 </section>
+            </main>
+        </section>
+
+        <!-- === GAME PAGE - UPDATED TO LOAD IN SAME WINDOW === -->
+        <section id="game-thien-van" class="router-page">
+            <section class="router-page-hero">
+                <div class="container">
+                    <h1>Game Thiên Văn</h1>
+                    <p class="page-subtitle">Học mà chơi, chơi mà học! Thử thách kiến thức vũ trụ của bạn.</p>
+                </div>
+            </section>
+            <div class="container">
+                <div class="game-grid-enhanced">
+
+                    <!-- Game Card 1: Đố Vui Hành Tinh -->
+                    <div class="game-card-enhanced">
+                        <div class="game-card-icon"><svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div>
+                        <h3>Đố Vui Hành Tinh</h3>
+                        <p>Bạn biết bao nhiêu về các hành tinh trong Hệ Mặt Trời và xa hơn nữa? Kiểm tra kiến thức của bạn!</p>
+                        <a href="http://astronomy-game2.my-style.in/" class="btn btn-primary">Chơi Ngay</a>
+                    </div>
+
+                    <!-- Game Card 2: Ghép Chòm Sao -->
+                    <div class="game-card-enhanced">
+                        <div class="game-card-icon"><svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/><line x1="3.5" y1="15.5" x2="7" y2="14"/><line x1="20.5" y1="15.5" x2="17" y2="14"/><line x1="12" y1="22" x2="12" y2="17.77"/><line x1="5.5" y1="7.5" x2="9" y2="9"/><line x1="18.5" y1="7.5" x2="15" y2="9"/></svg></div>
+                        <h3>Ghép Chòm Sao</h3>
+                        <p>Nối các ngôi sao để tạo thành các chòm sao quen thuộc trên bầu trời đêm. Bạn có nhận ra chúng không?</p>
+                        <a href="http://astronomy-game1.my-style.in/" class="btn btn-primary">Chơi Ngay</a>
+                    </div>
+
+
+                     <!-- Quiz Card - Integrated -->
+                     <div class="game-card-enhanced quiz-card">
+                        <div id="quiz-intro">
+                             <div class="game-card-icon"><svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 10.5a3.5 3.5 0 1 1-7 0 3.5 3.5 0 0 1 7 0z"/><path d="M12 14v7"/><path d="M9 17h6"/><path d="M17 17a2 2 0 1 0-4 0"/><circle cx="12" cy="12" r="10"/></svg></div>
+                             <h3>Quiz Kiến Thức Nhanh</h3>
+                             <p>Kiểm tra nhanh hiểu biết của bạn về các khái niệm thiên văn cơ bản qua những câu hỏi trắc nghiệm thú vị!</p>
+                             <button id="start-quiz-btn" class="btn btn-primary">Bắt Đầu Quiz</button>
+                        </div>
+                         <div id="quiz-container" class="hide">
+                             <div id="question-text">Câu hỏi sẽ xuất hiện ở đây</div>
+                             <div id="answer-buttons">
+                                 <button class="answer-btn btn">Đáp án 1</button>
+                                 <button class="answer-btn btn">Đáp án 2</button>
+                                 <button class="answer-btn btn">Đáp án 3</button>
+                                 <button class="answer-btn btn">Đáp án 4</button>
+                             </div>
+                             <div id="feedback-message" class="feedback-msg"></div>
+                             <button id="next-btn" class="btn hide">Câu Tiếp Theo</button>
+                         </div>
+                         <div id="score-container" class="hide">
+                            <h2>Kết Quả Quiz</h2>
+                            <p>Bạn đã trả lời đúng <span id="final-score">0</span> / <span id="total-questions">5</span> câu hỏi!</p>
+                             <button id="restart-btn" class="btn btn-primary">Chơi Lại</button>
+                         </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+        <!-- === END GAME PAGE === -->
+
+        <section id="tin-tuc" class="router-page">
+             <section class="router-page-hero">
+                 <div class="container">
+                    <h1>Tin Tức & Sự Kiện Vũ Trụ</h1>
+                    <p class="page-subtitle">Cập nhật những khám phá mới nhất, các hiện tượng thiên văn đáng chú ý và sự kiện nổi bật trên toàn thế giới.</p>
+                 </div>
+             </section>
+             <div class="tin-tuc-container">
+                 <div class="featured-news">
+                     <div class="featured-content">
+                         <div class="featured-image"> <img src="https://images.unsplash.com/photo-1614728894747-a83421e2b9c9?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1974&q=80" alt="Kính viễn vọng James Webb" loading="lazy"> </div>
+                         <div class="featured-text"> <span class="featured-label">Tin Nổi Bật</span> <h2 class="featured-title">James Webb phát hiện thiên hà cổ xưa nhất từng thấy</h2> <p class="featured-excerpt">Trong một phát hiện đột phá, Kính viễn vọng Không gian James Webb của NASA/ESA/CSA đã quan sát thấy các thiên hà ứng cử viên từ thời điểm chỉ 300 triệu năm sau Vụ Nổ Lớn.</p> <a href="#" onclick="event.preventDefault()" class="read-more">Đọc Tiếp</a> </div>
+                     </div>
+                 </div>
+                 <div class="news-grid">
+                     <div class="news-card"> <div class="news-image"> <img src="https://images.unsplash.com/photo-1462331940025-496dfbfc7564?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80" alt="Lỗ đen" loading="lazy"> </div> <div class="news-content"> <span class="news-date">15/03/2025</span> <h3 class="news-title">Phát hiện lỗ đen siêu khối lượng mới thách thức lý thuyết</h3> <p class="news-excerpt">Các nhà thiên văn học sử dụng Mạng Kính thiên văn Chân trời Sự kiện (EHT) đã phát hiện một lỗ đen siêu khối lượng dường như hình thành quá sớm trong lịch sử vũ trụ.</p>  </div> </div>
+                     <div class="news-card"> <div class="news-image"> <img src="https://images.unsplash.com/photo-1454789548928-9efd52dc4031?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2080&q=80" alt="Sao chổi" loading="lazy"> </div> <div class="news-content"> <span class="news-date">02/04/2025</span> <h3 class="news-title">Sao chổi C/2025 F1 'Thế kỷ' sẽ thắp sáng bầu trời</h3> <p class="news-excerpt">Các nhà thiên văn học dự đoán sao chổi mới được phát hiện C/2025 F1 có thể trở nên sáng như một số ngôi sao sáng nhất vào cuối năm nay, mang đến cảnh tượng ngoạn mục.</p> </div> </div>
+                     <div class="news-card"> <div class="news-image"> <img src="https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2072&q=80" alt="Trạm vũ trụ" loading="lazy"> </div> <div class="news-content"> <span class="news-date">20/03/2025</span> <h3 class="news-title">Trạm vũ trụ thương mại đầu tiên hoàn thành module lõi</h3> <p class="news-excerpt">Công ty Axiom Space đã công bố hoàn thành việc chế tạo module lõi cho trạm vũ trụ thương mại của mình, dự kiến phóng vào quỹ đạo vào năm 2026.</p>  </div> </div>
+                     <div class="news-card"> <div class="news-image"> <img src="https://images.unsplash.com/photo-1614315517650-3771cf72d18a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80" alt="Sao Hỏa" loading="lazy"> </div> <div class="news-content"> <span class="news-date">10/04/2025</span> <h3 class="news-title">Robot Perseverance phát hiện dấu vết hồ nước cổ đại trên Sao Hỏa</h3> <p class="news-excerpt">Robot thám hiểm Perseverance của NASA đã tìm thấy bằng chứng địa chất rõ ràng về một hồ nước sâu từng tồn tại trong miệng núi lửa Jezero hàng tỷ năm trước.</p>  </div> </div>
+                     <div class="news-card"> <div class="news-image"> <img src="https://images.unsplash.com/photo-1465101162946-4377e57745c3?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2078&q=80" alt="Thiên hà" loading="lazy"> </div> <div class="news-content"> <span class="news-date">05/04/2025</span> <h3 class="news-title">Phát hiện thiên hà vệ tinh mới của Dải Ngân Hà</h3> <p class="news-excerpt">Sử dụng dữ liệu từ khảo sát Dark Energy Survey, các nhà thiên văn học đã phát hiện một thiên hà lùn mờ nhạt, có thể là một vệ tinh mới của Dải Ngân Hà chúng ta.</p>  </div> </div>
+                     <div class="news-card"> <div class="news-image"> <img src="https://th.bing.com/th/id/OIP.BgnHKzOyVSMAEmivrFjTPAHaF7?rs=1&pid=ImgDetMain" alt="Tàu vũ trụ" loading="lazy"> </div> <div class="news-content"> <span class="news-date">25/03/2025</span> <h3 class="news-title">SpaceX công bố kế hoạch chi tiết cho Starship lên Mặt Trăng</h3> <p class="news-excerpt">Elon Musk, CEO của SpaceX, đã trình bày lộ trình cập nhật cho chương trình Starship, bao gồm các chuyến bay thử nghiệm quỹ đạo và mục tiêu hạ cánh lên Mặt Trăng.</p>  </div> </div>
+                 </div>
+             </div>
+        </section>
+
+        <section id="thu-vien" class="router-page">
+            <section class="router-page-hero">
+                 <div class="container">
+                    <h1>Khám Phá Vũ Trụ Kỳ Diệu</h1>
+                    <p class="page-subtitle">Chào mừng đến với thư viện vũ trụ - nơi lưu trữ những hình ảnh và video tuyệt đẹp từ các kính thiên văn và tàu vũ trụ hiện đại nhất của nhân loại.</p>
+                    <a href="#hinh-anh" class="btn-new-library">Khám Phá Ngay</a>
+                 </div>
+            </section>
+            <div class="thu-vien-container">
+                <section id="hinh-anh">
+                    <h2 class="section-title">Hình Ảnh Vũ Trụ</h2>
+                    <div class="gallery">
+                        <div class="gallery-item"> <img src="https://images.unsplash.com/photo-1614642264762-d0a3b8bf3700?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80" alt="Tinh vân Carina" loading="lazy"> <div class="gallery-item-content"> <h3>Tinh Vân Carina</h3> <p>Hình ảnh tuyệt đẹp của tinh vân Carina, một trong những vùng hình thành sao lớn nhất và sáng nhất trong Dải Ngân Hà, chụp bởi Kính viễn vọng James Webb.</p> </div> </div>
+                        <div class="gallery-item"> <img src="https://images.unsplash.com/photo-1462331940025-496dfbfc7564?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80" alt="Dải Ngân Hà" loading="lazy"> <div class="gallery-item-content"> <h3>Dải Ngân Hà</h3> <p>Hình ảnh ngoạn mục của trung tâm Dải Ngân Hà nhìn từ Đài thiên văn Paranal ở Chile, cho thấy hàng tỷ ngôi sao và các đám mây bụi tối màu.</p> </div> </div>
+                        <div class="gallery-item"> <img src="https://images.unsplash.com/photo-1543722530-d2c3201371e7?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2074&q=80" alt="Sao Hỏa" loading="lazy"> <div class="gallery-item-content"> <h3>Sao Hỏa</h3> <p>Hình ảnh chi tiết về bề mặt Sao Hỏa với các lớp trầm tích trong miệng núi lửa Gale, được chụp bởi tàu tự hành Curiosity của NASA.</p> </div> </div>
+                        <div class="gallery-item"> <img src="https://images.unsplash.com/photo-1454789548928-9efd52dc4031?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2080&q=80" alt="Trạm Vũ Trụ Quốc Tế" loading="lazy"> <div class="gallery-item-content"> <h3>Trạm Vũ Trụ Quốc Tế (ISS)</h3> <p>Trạm Vũ Trụ Quốc Tế đang bay quanh Trái Đất với tốc độ khoảng 28.000 km/h, một biểu tượng của sự hợp tác quốc tế trong không gian.</p> </div> </div>
+                        <div class="gallery-item"> <img src="https://nld.mediacdn.vn/2018/9/10/lua-cheia-10190448164475-1536578978349430967512.jpg" alt="Mặt Trăng" loading="lazy"> <div class="gallery-item-content"> <h3>Mặt Trăng</h3> <p>Hình ảnh chi tiết về bề mặt Mặt Trăng với các miệng núi lửa và biển dung nham cổ đại, được chụp từ quỹ đạo bởi Lunar Reconnaissance Orbiter.</p> </div> </div>
+                        <div class="gallery-item"> <img src="https://images.unsplash.com/photo-1419242902214-272b3f66ee7a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2113&q=80" alt="Tinh Vân Đại Bàng" loading="lazy"> <div class="gallery-item-content"> <h3>Tinh Vân Đại Bàng & Các Trụ Cột Sáng Tạo</h3> <p>Tinh vân Đại Bàng (Eagle Nebula) và chi tiết nổi tiếng "Các Trụ Cột Sáng Tạo", nơi những ngôi sao mới đang hình thành trong các đám mây khí bụi khổng lồ.</p> </div> </div>
+                    </div>
+                </section>
+                <section id="video" class="video-section">
+                    <div class="thu-vien-container">
+                        <h2 class="section-title">Video Vũ Trụ</h2>
+                        <div class="video-container">
+                            <div class="video-item">
+                                <video controls muted loop poster="https://via.placeholder.com/400x225/1e3a8a/ffffff?text=Video+Dải+Ngân+Hà"> <source src="https://youtu.be/4pDNxXsT4BY" type="video/mp4"> Trình duyệt của bạn không hỗ trợ thẻ video. </video>
+                                <div class="video-content"> <h3>Khám Phá Dải Ngân Hà</h3> <p>Video mô phỏng chuyến du hành qua dải Ngân Hà, chiêm ngưỡng các cấu trúc xoắn ốc và trung tâm thiên hà.</p> </div>
+                            </div>
+                            <div class="video-item">
+                                <video controls muted loop poster="https://via.placeholder.com/400x225/7f1d1d/ffffff?text=Video+Sao+Hỏa"> <source src="https://player.vimeo.com/external/517090081.sd.mp4?s=c9e4e4e5f5f322b9b4c89a1a0f5c9e5f5f5f5f5f&profile_id=164&oauth2_token_id=57447761" type="video/mp4"> Trình duyệt của bạn không hỗ trợ thẻ video. </video>
+                                <div class="video-content"> <h3>Bề Mặt Sao Hỏa</h3> <p>Video tổng hợp từ tàu thăm dò Perseverance của NASA, cho thấy cảnh quan đa dạng và các hoạt động khám phá trên Hành tinh Đỏ.</p> </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                 <section id="gioi-thieu" class="thu-vien-container">
+                    <h2 class="section-title">Về Thư Viện Vũ Trụ</h2>
+                    <div class="gallery-item" style="max-width: 800px; margin: 0 auto; background: rgba(13, 17, 38, 0.85); backdrop-filter: blur(5px);">
+                        <div class="gallery-item-content" style="text-align: center;">
+                            <p>Thư Viện Vũ Trụ là dự án nhằm sưu tầm và chia sẻ những hình ảnh, video và tài liệu đa phương tiện ấn tượng nhất về vũ trụ, được thu thập từ các sứ mệnh không gian, kính thiên văn mặt đất và không gian hàng đầu thế giới.</p>
+                            <p>Mục tiêu của chúng tôi là mang đến cho mọi người, từ học sinh, sinh viên đến những người yêu thiên văn, cái nhìn trực quan và đầy cảm hứng về vẻ đẹp và sự kỳ diệu của vũ trụ bao la.</p>
+                            <p>Tất cả hình ảnh và video được cập nhật thường xuyên từ các nguồn uy tín như NASA, ESA, ESO, Hubble Space Telescope, James Webb Space Telescope và nhiều tổ chức khác.</p>
+                        </div>
+                    </div>
+                 </section>
+            </div>
+        </section>
+
+    </main>
+    <!-- === END OF ROUTER OUTLET === -->
+
+    <!-- === MODAL STRUCTURE (For Kham Pha Page) === -->
+    <div id="kham-pha-modal" class="modal-container">
+        <div class="modal-content">
+            <button class="modal-close-btn" aria-label="Đóng">&times;</button>
+            <h3 id="modal-item-title">Tiêu đề mục</h3>
+            <div id="modal-item-description">
+                <p>Nội dung chi tiết sẽ được tải vào đây...</p>
+            </div>
+        </div>
+    </div>
+    <!-- === END OF MODAL STRUCTURE === -->
+
+
+    <!-- === FOOTER === -->
+    <footer class="spa-footer">
+        <div class="footer-bg-pattern"></div>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-about">
+                    <a data-target="hero" class="footer-logo nav-trigger"> <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2z"/><path d="M12 12a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/><path d="M19.07 4.93a10 10 0 0 0-14.14 0"/><path d="M4.93 19.07a10 10 0 0 0 14.14 0"/></svg> Khám Phá Vũ Trụ </a>
+                    <p class="footer-description"> Cánh cửa dẫn lối đến những điều kỳ diệu của vũ trụ. Khám phá, học hỏi và chia sẻ niềm đam mê thiên văn học cùng chúng tôi. </p>
+                    <div class="footer-social">
+                        <a href="#" aria-label="Twitter" onclick="event.preventDefault()" title="Twitter"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"></path></svg></a>
+                        <a href="#" aria-label="Facebook" onclick="event.preventDefault()" title="Facebook"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path></svg></a>
+                        <a href="#" aria-label="Instagram" onclick="event.preventDefault()" title="Instagram"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg></a>
+                        <a href="#" aria-label="Youtube" onclick="event.preventDefault()" title="Youtube"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 0 0-1.94 2A29 29 0 0 0 1 11.75a29 29 0 0 0 .46 5.33A2.78 2.78 0 0 0 3.4 19c1.72.46 8.6.46 8.6.46s6.88 0 8.6-.46a2.78 2.78 0 0 0 1.94-2 29 29 0 0 0 .46-5.25 29 29 0 0 0-.46-5.33z"></path><polygon points="9.75 15.02 15.5 11.75 9.75 8.48 9.75 15.02"></polygon></svg></a>
+                    </div>
+                </div>
+                <div>
+                    <h3 class="footer-heading">Khám Phá</h3>
+                    <ul class="footer-links">
+                        <li><a data-target="khai-quat" class="nav-trigger">Tổng Quan & Lịch Sử</a></li>
+                        <li><a data-target="kham-pha" class="nav-trigger">Hệ Mặt Trời</a></li>
+                        <li><a data-target="kham-pha" data-subtarget="#stars" class="nav-trigger">Sao & Tinh Vân</a></li>
+                        <li><a data-target="kham-pha" data-subtarget="#galaxies" class="nav-trigger">Thiên Hà</a></li>
+                         <!-- Removed invalid subtarget link -->
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="footer-heading">Tài Nguyên</h3>
+                    <ul class="footer-links">
+                        <li><a data-target="tin-tuc" class="nav-trigger">Tin Tức Vũ Trụ</a></li>
+                        <li><a data-target="tin-tuc" class="nav-trigger">Sự Kiện Thiên Văn</a></li>
+                        <li><a data-target="thu-vien" data-subtarget="#hinh-anh" class="nav-trigger">Thư Viện Ảnh</a></li>
+                        <li><a data-target="thu-vien" data-subtarget="#video" class="nav-trigger">Thư Viện Video</a></li>
+                        <li><a data-target="game-thien-van" class="nav-trigger">Game Thiên Văn</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="footer-heading">Kết Nối</h3>
+                    <p class="footer-description" style="margin-bottom: 1rem; font-size: 0.9rem;">Chúng tôi luôn lắng nghe!</p>
+                    <a href="mailto:info@khamphavutru.space" class="footer-contact-link"> <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg> info@khamphavutru.space </a>
+                    <a href="tel:+84987654321" class="footer-contact-link"> <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg> +84 987 654 321 </a>
+                    <a href="#" class="footer-contact-link nav-trigger" data-target="contact-page" onclick="event.preventDefault()"> <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg> Ho Chi Minh City, Vietnam (Ví dụ) </a>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>© <span id="current-year"></span> Khám Phá Vũ Trụ. Thiết kế và phát triển với niềm đam mê.</p>
+                <p><a href="#" class="footer-bottom-link" onclick="event.preventDefault()">Chính sách Bảo mật</a> | <a href="#" class="footer-bottom-link" onclick="event.preventDefault()">Điều khoản Sử dụng</a></p>
+            </div>
+        </div>
+    </footer>
+    <!-- === END OF FOOTER === -->
+
+    <!-- Chatbot -->
+    <button id="chat-toggle-btn" aria-label="Mở Chatbot">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+    </button>
+    <div id="chat-window" class="hidden">
+        <div id="chat-header"> <span>Chat Với Trợ Lý Vũ Trụ</span> <button id="chat-close-btn" aria-label="Đóng Chatbot">×</button> </div>
+        <div id="chat-messages"> <div class="chat-message bot">Chào bạn! Tôi là Trợ lý Vũ Trụ ảo. Bạn cần tôi giúp gì về các hành tinh, tin tức, hoặc thư viện ảnh/video không?</div> </div>
+        <div id="chat-input-area"> <input type="text" id="chat-input" placeholder="Nhập câu hỏi..."> <button id="chat-send-btn">Gửi</button> </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // --- Mobile Menu ---
+            const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
+            const navLinksContainer = document.querySelector('.nav-links');
+            const menuIcon = mobileMenuBtn?.querySelector('svg');
+            let hamburgerIconSVG = `<line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/>`;
+            if (menuIcon?.innerHTML.includes('<line')) { hamburgerIconSVG = menuIcon.innerHTML; }
+            const closeIconSVG = `<line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>`;
+
+            if (mobileMenuBtn && navLinksContainer && menuIcon) {
+                mobileMenuBtn.addEventListener('click', () => {
+                    const isActive = navLinksContainer.classList.toggle('active');
+                    menuIcon.innerHTML = isActive ? closeIconSVG : hamburgerIconSVG;
+                    mobileMenuBtn.setAttribute('aria-label', isActive ? 'Đóng menu' : 'Mở menu');
+                    mobileMenuBtn.setAttribute('aria-expanded', isActive.toString());
+                });
+            }
+
+            // --- Footer Year ---
+            const yearSpan = document.getElementById('current-year');
+            if (yearSpan) { yearSpan.textContent = new Date().getFullYear(); }
+
+            // --- SPA Navigation ---
+            const homeViewContainer = document.getElementById('home-view');
+            const pageOutlet = document.getElementById('page-router-outlet');
+            const navTriggers = document.querySelectorAll('.nav-trigger');
+            const routerPages = document.querySelectorAll('.router-page');
+            const allNavLinks = document.querySelectorAll('.nav-links a, .logo.nav-trigger, .footer-links a.nav-trigger, a.footer-logo.nav-trigger'); // Include footer logo
+            const topicCardsAsTriggers = document.querySelectorAll('.topic-card.nav-trigger');
+
+             function showPage(targetId, subTarget = null) {
+                 allNavLinks.forEach(link => link.classList.remove('nav-active'));
+                 topicCardsAsTriggers.forEach(card => card.classList.remove('nav-active'));
+
+                 let targetPageFound = false;
+
+                 if (targetId === 'hero') {
+                     if(homeViewContainer) homeViewContainer.style.display = 'block';
+                     if(pageOutlet) pageOutlet.style.display = 'none';
+                     routerPages.forEach(page => page.classList.remove('active'));
+                     document.querySelectorAll('header.spa-header [data-target="hero"]').forEach(link => {
+                        if (link.tagName === 'A' || link.classList.contains('logo')) link.classList.add('nav-active');
+                     });
+                     document.querySelectorAll('footer.spa-footer a.footer-logo[data-target="hero"]').forEach(link => { link.classList.add('nav-active'); }); // Activate footer logo
+                     document.body.classList.add('showing-hero');
+                     targetPageFound = true;
+                     window.scrollTo({ top: 0, behavior: 'smooth' });
+                 } else {
+                     if(homeViewContainer) homeViewContainer.style.display = 'none';
+                     if(pageOutlet) pageOutlet.style.display = 'block';
+                     document.body.classList.remove('showing-hero');
+
+                     let scrolledToSubTarget = false;
+                     let pageActivated = false; // Flag to track if the target page was activated
+
+                     routerPages.forEach(page => {
+                         const isActive = page.id === targetId;
+                         page.classList.toggle('active', isActive);
+                         if (isActive) {
+                             pageActivated = true; // Mark as activated
+                             targetPageFound = true;
+                             // Initialize scroll effects only for newly activated Khám Phá, Tin Tức, Thư Viện
+                             if (page.id === 'kham-pha' || page.id === 'tin-tuc' || page.id === 'thu-vien') {
+                                 setTimeout(initializeNewPageScrollEffects, 50); // Delay slightly
+                             }
+                             // Handle subtarget scrolling only AFTER activation
+                             if (subTarget) {
+                                 setTimeout(() => {
+                                     const subTargetElement = page.querySelector(subTarget);
+                                     if (subTargetElement) {
+                                         const headerOffset = document.querySelector('header.spa-header')?.offsetHeight || 72; // Get actual header height or default
+                                         const elementPosition = subTargetElement.getBoundingClientRect().top;
+                                         const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+                                         window.scrollTo({ top: offsetPosition, behavior: "smooth" });
+                                         scrolledToSubTarget = true;
+                                     } else {
+                                         // If subtarget not found, scroll to top of the activated page
+                                         window.scrollTo({ top: 0, behavior: 'smooth' });
+                                         scrolledToSubTarget = false; // Mark as not scrolled to subtarget
+                                     }
+                                 }, 100); // Delay scrolling slightly for page render
+                             }
+                         }
+                     });
+
+                     // If target page was activated but no subtarget specified, scroll to top
+                     if (pageActivated && !subTarget && !scrolledToSubTarget) {
+                         window.scrollTo({ top: 0, behavior: 'smooth' });
+                     }
+
+                     // If target page wasn't found in the loop, default to hero
+                     if (!targetPageFound) {
+                         showPage('hero'); // Fallback to hero if target not found
+                         console.warn(`Target page "#${targetId}" not found.`);
+                         return; // Exit early
+                     }
+
+                     // Update active nav links AFTER determining the active page
+                     document.querySelectorAll('header.spa-header .nav-links a.nav-trigger[data-target="' + targetId + '"]').forEach(link => { link.classList.add('nav-active'); });
+                     document.querySelectorAll('footer.spa-footer a.nav-trigger[data-target="' + targetId + '"]').forEach(link => {
+                          if (!link.classList.contains('footer-logo')) { // Exclude footer logo here
+                             link.classList.add('nav-active');
+                          }
+                     });
+                     // Deactivate footer logo explicitly if not on hero page
+                     document.querySelectorAll('footer.spa-footer a.footer-logo[data-target="hero"]').forEach(link => { link.classList.remove('nav-active'); });
+
+                 }
+
+                  // Close mobile menu after navigation
+                  if (window.innerWidth < 768 && navLinksContainer && navLinksContainer.classList.contains('active')) {
+                       navLinksContainer.classList.remove('active');
+                       if(menuIcon) menuIcon.innerHTML = hamburgerIconSVG;
+                       if(mobileMenuBtn) {
+                           mobileMenuBtn.setAttribute('aria-label', 'Mở menu');
+                           mobileMenuBtn.setAttribute('aria-expanded', 'false');
+                       }
+                  }
+             }
+
+
+            navTriggers.forEach(trigger => {
+                 // Exclude chat links handled separately
+                 if (!trigger.classList.contains('chat-link')) {
+                    trigger.addEventListener('click', (e) => {
+                        // Prevent default only if it's a link/button meant for SPA navigation
+                        const isSpaNavLink = trigger.hasAttribute('data-target') && (trigger.tagName === 'A' || trigger.tagName === 'BUTTON' || trigger.classList.contains('logo') || trigger.classList.contains('topic-card'));
+
+                        if (isSpaNavLink) {
+                             e.preventDefault();
+                             const targetId = trigger.getAttribute('data-target');
+                             const subTarget = trigger.getAttribute('data-subtarget');
+                             if (targetId) { showPage(targetId, subTarget); }
+                         }
+                         // Allow default behavior for other links (like external game links or non-nav anchors)
+                    });
+                }
+            });
+
+
+             showPage('hero'); // Initial load
+
+            // --- Effects ---
+            function createSparkle(x, y) { if (window.matchMedia("(pointer: coarse)").matches) {return;} const sparkle = document.createElement('div'); sparkle.className = 'sparkle'; document.body.appendChild(sparkle); sparkle.style.left = `${x}px`; sparkle.style.top = `${y}px`; const randomX = (Math.random() - 0.5) * 30; const randomY = (Math.random() - 0.5) * 30; sparkle.style.setProperty('--sparkle-x', `${randomX}px`); sparkle.style.setProperty('--sparkle-y', `${randomY}px`); const randomSize = Math.random() * 4 + 4; sparkle.style.width = `${randomSize}px`; sparkle.style.height = `${randomSize}px`; sparkle.addEventListener('animationend', () => { if (sparkle.parentNode) { sparkle.remove(); } }); }
+            let throttleTimer = false; const throttleDelay = 15;
+            document.addEventListener('mousemove', (e) => { if (!throttleTimer) { throttleTimer = true; setTimeout(() => { createSparkle(e.clientX, e.clientY); throttleTimer = false; }, throttleDelay); } });
+            document.addEventListener('click', (e) => { if (e.target.closest('#chat-window') || e.target.closest('#chat-toggle-btn')) { return; } const ripple = document.createElement('div'); ripple.className = 'click-ripple'; document.body.appendChild(ripple); ripple.style.left = `${e.clientX}px`; ripple.style.top = `${e.clientY}px`; ripple.addEventListener('animationend', () => { if (ripple.parentNode) { ripple.remove(); } }); });
+
+            // --- Scroll Effects for specific pages ---
+            let newPageScrollListenerAttached = false;
+            function checkNewPageSections() {
+                 const visibleSections = document.querySelectorAll('#kham-pha .section, #tin-tuc .news-card, #tin-tuc .featured-news, #thu-vien .gallery-item, #thu-vien .video-item, #khai-quat .timeline-entry'); // Add timeline entries
+                 const triggerBottom = window.innerHeight * 0.8;
+                 visibleSections.forEach(section => {
+                    const parentPage = section.closest('.router-page');
+                    // Only trigger animation if the parent page is active and section is not already visible
+                    if (parentPage && parentPage.classList.contains('active') && !section.classList.contains('visible')) {
+                        const sectionTop = section.getBoundingClientRect().top;
+                        if (sectionTop < triggerBottom) {
+                            section.classList.add('visible'); // Add 'visible' for Kham Pha etc.
+                             // For timeline, the animation is handled by CSS animation delay, just need parent active
+                             if (section.classList.contains('timeline-entry')) {
+                                 // Animation starts automatically via CSS when parent is active
+                             }
+                        }
+                    } else if (parentPage && !parentPage.classList.contains('active')) {
+                         // Optional: Reset visibility if the page is no longer active
+                         // section.classList.remove('visible'); // This might cause re-triggering issues if not careful
+                    }
+                 });
+            }
+             function initializeNewPageScrollEffects() {
+                 if (!newPageScrollListenerAttached) {
+                     window.addEventListener('scroll', checkNewPageSections, { passive: true });
+                     newPageScrollListenerAttached = true;
+                 }
+                 checkNewPageSections();
+             }
+
+            // --- Chatbot Logic ---
+            const chatToggleButton = document.getElementById('chat-toggle-btn');
+            const chatWindow = document.getElementById('chat-window');
+            const chatCloseButton = document.getElementById('chat-close-btn');
+            const chatMessages = document.getElementById('chat-messages');
+            const chatInput = document.getElementById('chat-input');
+            const chatSendButton = document.getElementById('chat-send-btn');
+            const chatRules = { "hello": "Chào bạn! Tôi là Trợ lý Vũ Trụ ảo. Bạn cần tôi giúp gì?", "hi": "Hi! Tôi có thể giúp gì cho bạn trong hành trình khám phá vũ trụ?", "chào": "Xin chào! Hãy hỏi tôi về các hành tinh, tin tức, hoặc thư viện ảnh nhé.", "bạn là ai": "Tôi là một trợ lý ảo được lập trình để cung cấp thông tin cơ bản về trang web Khám Phá Vũ Trụ.", "giúp": "Tôi có thể cung cấp thông tin về các chủ đề như: 'hệ mặt trời', 'sao', 'thiên hà', 'tin tức', 'thư viện', 'game'. Bạn muốn biết về gì?", "mặt trời": "Mặt Trời là ngôi sao ở trung tâm Hệ Mặt Trời của chúng ta. Nó là một quả cầu plasma khổng lồ, cung cấp ánh sáng và nhiệt cho Trái Đất.", "trái đất": "Trái Đất là hành tinh thứ ba tính từ Mặt Trời và là ngôi nhà duy nhất của sự sống mà chúng ta biết đến.", "mặt trăng": "Mặt Trăng là vệ tinh tự nhiên duy nhất của Trái Đất. Bạn có thể xem ảnh Mặt Trăng trong <a href='#' data-target='thu-vien' data-subtarget='#hinh-anh' class='nav-trigger chat-link'>Thư Viện Ảnh</a>.", "sao hỏa": "Sao Hỏa, hay còn gọi là Hành tinh Đỏ, là hành tinh thứ tư. Hiện có các robot tự hành đang khám phá bề mặt của nó.", "sao mộc": "Sao Mộc là hành tinh lớn nhất trong Hệ Mặt Trời, một hành tinh khí khổng lồ nổi tiếng với Vết Đỏ Lớn.", "hành tinh": "Hệ Mặt Trời có 8 hành tinh chính: Sao Thủy, Sao Kim, Trái Đất, Sao Hỏa, Sao Mộc, Sao Thổ, Sao Thiên Vương, Sao Hải Vương. Bạn muốn biết về hành tinh nào cụ thể?", "sao": "Sao là những quả cầu khí plasma tự phát sáng. Mặt Trời là một ví dụ. Có hàng tỷ ngôi sao trong thiên hà của chúng ta. Bạn có thể tìm hiểu thêm ở mục <a href='#' data-target='kham-pha' data-subtarget='#stars' class='nav-trigger chat-link'>Khám Phá</a>.", "thiên hà": "Thiên hà là những hệ thống khổng lồ chứa hàng tỷ ngôi sao. Chúng ta đang ở trong Dải Ngân Hà. Xem thêm ở mục <a href='#' data-target='kham-pha' data-subtarget='#galaxies' class='nav-trigger chat-link'>Khám Phá</a> nhé.", "vũ trụ": "Vũ trụ là tất cả không gian, thời gian, vật chất và năng lượng tồn tại. Nó rất rộng lớn và vẫn còn nhiều bí ẩn!", "big bang": "Vụ Nổ Lớn (Big Bang) là mô hình khoa học mô tả nguồn gốc và sự tiến hóa ban đầu của Vũ trụ từ khoảng 13.8 tỷ năm trước.", "tinh vân": "Tinh vân là những đám mây khí và bụi khổng lồ, nơi các ngôi sao được sinh ra hoặc là tàn dư sao chết. Trang <a href='#' data-target='kham-pha' data-subtarget='#nebulae' class='nav-trigger chat-link'>Khám Phá</a> có thông tin về một số tinh vân nổi tiếng.", "stellarium": "Trang <a href='#' data-target='kham-pha' class='nav-trigger chat-link'>Khám Phá</a> có tích hợp bản đồ sao tương tác, bạn có thể thử nhé!", "tin tức": "Bạn có thể xem các tin tức thiên văn mới nhất tại trang <a href='#' data-target='tin-tuc' class='nav-trigger chat-link'>Tin Tức</a>.", "tin mới": "Xem tin tức cập nhật tại <a href='#' data-target='tin-tuc' class='nav-trigger chat-link'>Tin Tức</a> nhé!", "ảnh": "Chúng tôi có rất nhiều ảnh vũ trụ đẹp trong <a href='#' data-target='thu-vien' data-subtarget='#hinh-anh' class='nav-trigger chat-link'>Thư Viện Ảnh</a>.", "video": "Khám phá các video thú vị tại <a href='#' data-target='thu-vien' data-subtarget='#video' class='nav-trigger chat-link'>Thư Viện Video</a>.", "thư viện": "Bạn muốn xem ảnh, video hay bài viết trong <a href='#' data-target='thu-vien' class='nav-trigger chat-link'>Thư Viện</a>?", "game": "Hãy thử các trò chơi thiên văn thú vị tại trang <a href='#' data-target='game-thien-van' class='nav-trigger chat-link'>Game</a>!", "khái quát": "Tìm hiểu các khái niệm cơ bản về thiên văn học tại trang <a href='#' data-target='khai-quat' class='nav-trigger chat-link'>Khái Quát</a>.", "khám phá": "Bắt đầu hành trình khám phá Hệ Mặt Trời, sao, thiên hà tại trang <a href='#' data-target='kham-pha' class='nav-trigger chat-link'>Khám Phá</a>.", "bản đồ sao": "Trang <a href='#' data-target='kham-pha' class='nav-trigger chat-link'>Khám Phá</a> có tích hợp bản đồ sao tương tác đấy!", "mô phỏng 3d": "Trang <a href='#' data-target='kham-pha' class='nav-trigger chat-link'>Khám Phá</a> có liên kết đến các công cụ mô phỏng vũ trụ 3D.", "cảm ơn": "Rất vui được giúp bạn!", "tạm biệt": "Tạm biệt! Hẹn gặp lại bạn trong những chuyến du hành vũ trụ tiếp theo.", "bye": "Tạm biệt!", "default": "Xin lỗi, tôi chưa hiểu câu hỏi của bạn. Bạn có thể thử hỏi về 'hành tinh', 'tin tức', 'thư viện', 'game' hoặc các chủ đề thiên văn khác không?" };
+            function toggleChatWindow() { chatWindow.classList.toggle('hidden'); if (!chatWindow.classList.contains('hidden')) { chatInput.focus(); setTimeout(() => { if(chatMessages) chatMessages.scrollTop = chatMessages.scrollHeight; }, 50); } }
+            function displayMessage(message, sender) {
+                 if (!chatMessages) return;
+                 const messageElement = document.createElement('div');
+                 messageElement.classList.add('chat-message', sender);
+                 messageElement.innerHTML = message; // Use innerHTML to render links
+                 chatMessages.appendChild(messageElement);
+                 chatMessages.scrollTop = chatMessages.scrollHeight;
+                 // Add event listeners AFTER the element is in the DOM
+                 messageElement.querySelectorAll('a.chat-link.nav-trigger').forEach(link => {
+                     link.addEventListener('click', (e) => {
+                         e.preventDefault();
+                         const targetId = link.getAttribute('data-target');
+                         const subTarget = link.getAttribute('data-subtarget');
+                         if (targetId) {
+                             showPage(targetId, subTarget);
+                             // Optionally close chat window on mobile after clicking a link
+                             if (window.innerWidth < 768 && !chatWindow.classList.contains('hidden')) { toggleChatWindow(); }
+                         }
+                     });
+                 });
+             }
+            function getBotResponse(userInput) {
+                 const lowerCaseInput = userInput.toLowerCase().trim().replace(/[.,!?]/g, '');
+                 let response = chatRules.default; let foundMatch = false;
+                 // Exact match check
+                 if (chatRules[lowerCaseInput]) { response = chatRules[lowerCaseInput]; foundMatch = true; }
+                  // Keyword check (sorted by length descending)
+                 if (!foundMatch) {
+                     const sortedKeywords = Object.keys(chatRules).filter(k => k !== 'default' && k.length > 1).sort((a, b) => b.length - a.length);
+                     for (const keyword of sortedKeywords) {
+                        // Use word boundaries (\b) to avoid partial matches within words
+                        const regex = new RegExp(`\\b${keyword.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&')}\\b`, 'i');
+                        if (regex.test(lowerCaseInput)) {
+                             response = chatRules[keyword];
+                             foundMatch = true;
+                             break;
+                         }
+                     }
+                 }
+                 // Simulate bot thinking time
+                 setTimeout(() => { displayMessage(response, 'bot'); }, 300 + Math.random() * 400);
+            }
+            function handleSendMessage() {
+                 if (!chatInput || !chatMessages) return; const userInput = chatInput.value; if (userInput.trim() === '') return;
+                 displayMessage(userInput, 'user'); chatInput.value = ''; getBotResponse(userInput); chatInput.focus();
+            }
+            if (chatToggleButton && chatWindow && chatCloseButton && chatMessages && chatInput && chatSendButton) {
+                 chatToggleButton.addEventListener('click', toggleChatWindow); chatCloseButton.addEventListener('click', toggleChatWindow); chatSendButton.addEventListener('click', handleSendMessage);
+                 chatInput.addEventListener('keypress', (event) => { if (event.key === 'Enter') { event.preventDefault(); handleSendMessage(); } });
+            } else { console.error("Chatbot UI elements not found."); }
+
+             // --- === Quiz Game Logic === ---
+            const startButton = document.getElementById('start-quiz-btn');
+            const quizIntroElement = document.getElementById('quiz-intro');
+            const quizContainerElement = document.getElementById('quiz-container');
+            const scoreContainerElement = document.getElementById('score-container');
+            const questionElement = document.getElementById('question-text');
+            const answerButtonsElement = document.getElementById('answer-buttons');
+            const feedbackElement = document.getElementById('feedback-message');
+            const nextButton = document.getElementById('next-btn');
+            const restartButton = document.getElementById('restart-btn');
+            const finalScoreElement = document.getElementById('final-score');
+            const totalQuestionsElement = document.getElementById('total-questions');
+
+            let shuffledQuestions, currentQuestionIndex;
+            let score = 0;
+
+            const questions = [ { question: "Hành tinh nào gần Mặt Trời nhất?", answers: [ { text: "Sao Kim", correct: false }, { text: "Sao Thủy", correct: true }, { text: "Trái Đất", correct: false }, { text: "Sao Hỏa", correct: false } ] }, { question: "Hành tinh nào được mệnh danh là 'Hành tinh Đỏ'?", answers: [ { text: "Sao Mộc", correct: false }, { text: "Sao Hỏa", correct: true }, { text: "Sao Thổ", correct: false }, { text: "Sao Kim", correct: false } ] }, { question: "Hành tinh lớn nhất trong Hệ Mặt Trời là gì?", answers: [ { text: "Trái Đất", correct: false }, { text: "Sao Thiên Vương", correct: false }, { text: "Sao Mộc", correct: true }, { text: "Sao Hải Vương", correct: false } ] }, { question: "Hành tinh nào nổi tiếng với hệ thống vành đai lớn và rõ ràng?", answers: [ { text: "Sao Mộc", correct: false }, { text: "Sao Thiên Vương", correct: false }, { text: "Sao Hải Vương", correct: false }, { text: "Sao Thổ", correct: true } ] }, { question: "Trái Đất là hành tinh thứ mấy tính từ Mặt Trời?", answers: [ { text: "1", correct: false }, { text: "2", correct: false }, { text: "3", correct: true }, { text: "4", correct: false } ] } ];
+
+            function setupQuizListeners() {
+                 const gamePage = document.getElementById('game-thien-van');
+                 if (!gamePage || !gamePage.classList.contains('active')) return; // Only setup if game page is active
+
+                 const startBtn = gamePage.querySelector('#start-quiz-btn');
+                 const nextBtn = gamePage.querySelector('#next-btn');
+                 const restartBtn = gamePage.querySelector('#restart-btn');
+
+                 if (startBtn && nextBtn && restartBtn) {
+                     // Remove existing listeners to prevent duplicates if page is revisited
+                     startBtn.removeEventListener('click', startQuiz);
+                     nextBtn.removeEventListener('click', handleNextButton);
+                     restartBtn.removeEventListener('click', startQuiz);
+
+                     // Add new listeners
+                     startBtn.addEventListener('click', startQuiz);
+                     nextBtn.addEventListener('click', handleNextButton);
+                     restartBtn.addEventListener('click', startQuiz);
+                 } else {
+                     console.error("Quiz buttons not found on active game page.");
+                 }
+            }
+
+            function startQuiz() {
+                // Query elements within the game page context when starting
+                const gamePage = document.getElementById('game-thien-van');
+                if (!gamePage) return;
+
+                const introEl = gamePage.querySelector('#quiz-intro');
+                const containerEl = gamePage.querySelector('#quiz-container');
+                const scoreEl = gamePage.querySelector('#score-container');
+                const totalEl = gamePage.querySelector('#total-questions'); // Query here
+
+                if (!introEl || !containerEl || !scoreEl || !totalEl) {
+                    console.error("Quiz UI elements missing during start!");
+                    return;
+                }
+                score = 0; currentQuestionIndex = 0;
+                introEl.classList.add('hide');
+                scoreEl.classList.add('hide');
+                containerEl.classList.remove('hide');
+                shuffledQuestions = questions.sort(() => Math.random() - 0.5);
+                totalEl.innerText = shuffledQuestions.length; // Set total questions number
+                setNextQuestion();
+            }
+
+            function setNextQuestion() { resetState(); showQuestion(shuffledQuestions[currentQuestionIndex]); }
+
+            function showQuestion(question) {
+                 const gamePage = document.getElementById('game-thien-van');
+                 if(!gamePage) return;
+                 const questionEl = gamePage.querySelector('#question-text');
+                 const answersEl = gamePage.querySelector('#answer-buttons');
+                 if(!questionEl || !answersEl) return;
+
+                questionEl.innerText = question.question;
+                // Clear previous buttons
+                while (answersEl.firstChild) { answersEl.removeChild(answersEl.firstChild); }
+                // Add new buttons
+                question.answers.forEach(answer => {
+                    const button = document.createElement('button'); button.innerText = answer.text; button.classList.add('answer-btn', 'btn');
+                    if (answer.correct) { button.dataset.correct = answer.correct; }
+                    button.addEventListener('click', selectAnswer); answersEl.appendChild(button);
+                });
+            }
+            function resetState() {
+                 const gamePage = document.getElementById('game-thien-van');
+                 if(!gamePage) return;
+                 const feedbackEl = gamePage.querySelector('#feedback-message');
+                 const nextBtn = gamePage.querySelector('#next-btn');
+                 const answersEl = gamePage.querySelector('#answer-buttons');
+                 if(!feedbackEl || !nextBtn || !answersEl) return;
+
+                feedbackEl.innerText = ''; feedbackEl.classList.remove('correct', 'incorrect'); nextBtn.classList.add('hide');
+                while (answersEl.firstChild) { answersEl.removeChild(answersEl.firstChild); }
+            }
+
+             function selectAnswer(e) {
+                 const gamePage = document.getElementById('game-thien-van');
+                 if(!gamePage) return;
+                 const feedbackEl = gamePage.querySelector('#feedback-message');
+                 const answersEl = gamePage.querySelector('#answer-buttons');
+                 const nextBtn = gamePage.querySelector('#next-btn');
+                 if (!feedbackEl || !answersEl || !nextBtn) return;
+
+                const selectedButton = e.target;
+                const correct = selectedButton.dataset.correct === "true";
+                feedbackEl.classList.remove('correct', 'incorrect'); // Clear previous feedback classes
+
+                if (correct) {
+                    selectedButton.classList.add('correct');
+                    feedbackEl.innerText = "Chính xác!";
+                    feedbackEl.classList.add('correct');
+                    score++;
+                }
+                else {
+                    selectedButton.classList.add('incorrect');
+                    feedbackEl.innerText = "Không đúng rồi!";
+                    feedbackEl.classList.add('incorrect');
+                    // Highlight the correct answer
+                    const correctButton = Array.from(answersEl.children).find(button => button.dataset.correct === "true");
+                    if (correctButton) correctButton.classList.add('correct');
+                 }
+                // Disable all buttons
+                Array.from(answersEl.children).forEach(button => { button.disabled = true; });
+                // Show next button or final score
+                if (shuffledQuestions.length > currentQuestionIndex + 1) { nextBtn.classList.remove('hide'); }
+                else { setTimeout(showScore, 1000); } // Delay before showing score
+            }
+
+             function showScore() {
+                  const gamePage = document.getElementById('game-thien-van');
+                  if(!gamePage) return;
+                  const containerEl = gamePage.querySelector('#quiz-container');
+                  const scoreEl = gamePage.querySelector('#score-container');
+                  const finalScoreEl = gamePage.querySelector('#final-score');
+                  const totalEl = gamePage.querySelector('#total-questions');
+                 if(!containerEl || !scoreEl || !finalScoreEl || !totalEl) return;
+
+                 resetState(); // Clear question/buttons
+                 containerEl.classList.add('hide');
+                 scoreEl.classList.remove('hide');
+                 finalScoreEl.innerText = score;
+                 totalEl.innerText = shuffledQuestions.length; // Ensure total is displayed correctly
+            }
+
+             function handleNextButton() { currentQuestionIndex++; setNextQuestion(); }
+
+             // Initial setup or re-setup when game page becomes active
+             // We'll call setupQuizListeners() inside showPage when game-thien-van is activated
+             // Modifying showPage slightly:
+             const originalShowPage = showPage; // Store original function if needed, or modify directly
+             function showPage(targetId, subTarget = null) {
+                 // ... (Existing showPage logic from previous step) ...
+                 allNavLinks.forEach(link => link.classList.remove('nav-active'));
+                 topicCardsAsTriggers.forEach(card => card.classList.remove('nav-active'));
+
+                 let targetPageFound = false;
+                 let pageActivated = false; // Flag to track if the target page was activated
+
+                 if (targetId === 'hero') {
+                     if(homeViewContainer) homeViewContainer.style.display = 'block';
+                     if(pageOutlet) pageOutlet.style.display = 'none';
+                     routerPages.forEach(page => page.classList.remove('active'));
+                     document.querySelectorAll('header.spa-header [data-target="hero"]').forEach(link => {
+                        if (link.tagName === 'A' || link.classList.contains('logo')) link.classList.add('nav-active');
+                     });
+                     document.querySelectorAll('footer.spa-footer a.footer-logo[data-target="hero"]').forEach(link => { link.classList.add('nav-active'); }); // Activate footer logo
+                     document.body.classList.add('showing-hero');
+                     targetPageFound = true;
+                     window.scrollTo({ top: 0, behavior: 'smooth' });
+                 } else {
+                     if(homeViewContainer) homeViewContainer.style.display = 'none';
+                     if(pageOutlet) pageOutlet.style.display = 'block';
+                     document.body.classList.remove('showing-hero');
+
+                     let scrolledToSubTarget = false;
+
+                     routerPages.forEach(page => {
+                         const isActive = page.id === targetId;
+                         page.classList.toggle('active', isActive);
+                         if (isActive) {
+                             pageActivated = true; // Mark as activated
+                             targetPageFound = true;
+                             // Initialize scroll effects only for newly activated specific pages
+                             if (page.id === 'kham-pha' || page.id === 'tin-tuc' || page.id === 'thu-vien' || page.id === 'khai-quat') {
+                                 setTimeout(initializeNewPageScrollEffects, 50);
+                             }
+                             // Setup quiz listeners if game page is activated
+                             if (page.id === 'game-thien-van') {
+                                 setTimeout(setupQuizListeners, 50); // Delay setup slightly
+                             }
+
+                             if (subTarget) {
+                                 setTimeout(() => {
+                                     const subTargetElement = page.querySelector(subTarget);
+                                     if (subTargetElement) {
+                                         const headerOffset = document.querySelector('header.spa-header')?.offsetHeight || 72;
+                                         const elementPosition = subTargetElement.getBoundingClientRect().top;
+                                         const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+                                         window.scrollTo({ top: offsetPosition, behavior: "smooth" });
+                                         scrolledToSubTarget = true;
+                                     } else {
+                                         window.scrollTo({ top: 0, behavior: 'smooth' });
+                                         scrolledToSubTarget = false;
+                                     }
+                                 }, 100);
+                             }
+                         }
+                     });
+
+                     if (pageActivated && !subTarget && !scrolledToSubTarget) {
+                         window.scrollTo({ top: 0, behavior: 'smooth' });
+                     }
+
+                     if (!targetPageFound) {
+                         showPage('hero');
+                         console.warn(`Target page "#${targetId}" not found.`);
+                         return;
+                     }
+
+                     document.querySelectorAll('header.spa-header .nav-links a.nav-trigger[data-target="' + targetId + '"]').forEach(link => { link.classList.add('nav-active'); });
+                     document.querySelectorAll('footer.spa-footer a.nav-trigger[data-target="' + targetId + '"]').forEach(link => {
+                          if (!link.classList.contains('footer-logo')) {
+                             link.classList.add('nav-active');
+                          }
+                     });
+                     document.querySelectorAll('footer.spa-footer a.footer-logo[data-target="hero"]').forEach(link => { link.classList.remove('nav-active'); });
+                 }
+
+                  if (window.innerWidth < 768 && navLinksContainer && navLinksContainer.classList.contains('active')) {
+                       navLinksContainer.classList.remove('active');
+                       if(menuIcon) menuIcon.innerHTML = hamburgerIconSVG;
+                       if(mobileMenuBtn) {
+                           mobileMenuBtn.setAttribute('aria-label', 'Mở menu');
+                           mobileMenuBtn.setAttribute('aria-expanded', 'false');
+                       }
+                  }
+             } // End of modified showPage
+
+             // --- === End Quiz Game Logic === ---
+
+            // --- Modal Logic for Kham Pha section ---
+            const modalContainer = document.getElementById('kham-pha-modal');
+            const modalTitleElement = document.getElementById('modal-item-title');
+            const modalDescriptionElement = document.getElementById('modal-item-description');
+            const modalCloseBtn = modalContainer?.querySelector('.modal-close-btn');
+
+            // Define detailed content for modal items
+            const khamPhaModalData = {
+                "sun": {
+                    title: "Mặt Trời - Ngôi Sao Của Chúng Ta",
+                    description: `
+                        <p>Mặt Trời là một ngôi sao loại G (sao lùn vàng) nằm ở trung tâm Hệ Mặt Trời, chiếm khoảng 99.86% tổng khối lượng của hệ.</p>
+                        <p><strong>Nhiệt độ:</strong> Bề mặt khoảng 5.500 °C, lõi lên đến 15 triệu °C.</p>
+                        <p><strong>Cấu tạo:</strong> Chủ yếu là Hydro (khoảng 73%) và Heli (khoảng 25%), cùng một lượng nhỏ các nguyên tố nặng hơn.</p>
+                        <p>Năng lượng của Mặt Trời được tạo ra từ phản ứng tổng hợp hạt nhân tại lõi, chuyển đổi hydro thành heli. Năng lượng này mất hàng nghìn đến hàng triệu năm để truyền ra bề mặt và bức xạ vào không gian dưới dạng ánh sáng và nhiệt, duy trì sự sống trên Trái Đất.</p>
+                        <p>Tuổi thọ ước tính của Mặt Trời là khoảng 10 tỷ năm, hiện nó đã đi được nửa chặng đường.</p>
+                    `
+                },
+                "sirius": {
+                    title: "Sirius - Sao Thiên Lang",
+                    description: `
+                        <p>Sirius (α Canis Majoris) là ngôi sao sáng nhất trên bầu trời đêm, nằm trong chòm sao Đại Khuyển (Canis Major).</p>
+                        <p><strong>Hệ thống sao đôi:</strong> Sirius thực chất là một hệ sao đôi, bao gồm sao chính Sirius A (sao loại A, sáng hơn Mặt Trời 25 lần) và sao đồng hành Sirius B (sao lùn trắng, mờ hơn nhiều).</p>
+                        <p><strong>Khoảng cách:</strong> Cách Trái Đất khoảng 8.6 năm ánh sáng, là một trong những hệ sao gần nhất.</p>
+                        <p>Sirius có vai trò quan trọng trong nhiều nền văn hóa cổ đại, ví dụ như người Ai Cập cổ đại dùng sự xuất hiện của nó để dự đoán lũ lụt hàng năm của sông Nile.</p>
+                    `
+                },
+                 "betelgeuse": {
+                    title: "Betelgeuse - Siêu Khổng Lồ Đỏ",
+                    description: `
+                        <p>Betelgeuse (α Orionis) là một ngôi sao siêu khổng lồ đỏ trong chòm sao Lạp Hộ (Orion), một trong những ngôi sao lớn nhất và sáng nhất mà mắt thường có thể nhìn thấy.</p>
+                        <p><strong>Kích thước khổng lồ:</strong> Nếu đặt Betelgeuse vào vị trí Mặt Trời, bề mặt của nó có thể mở rộng vượt qua quỹ đạo của Sao Mộc.</p>
+                        <p><strong>Sắp kết thúc vòng đời:</strong> Betelgeuse đang ở giai đoạn cuối của vòng đời sao. Nó được dự đoán sẽ nổ thành một siêu tân tinh (supernova) trong vòng 100.000 năm tới. Khi nổ, nó có thể sáng như Mặt Trăng tròn trên bầu trời Trái Đất trong vài tuần hoặc vài tháng.</p>
+                        <p>Nó có màu đỏ cam đặc trưng và độ sáng thay đổi không đều.</p>
+                    `
+                },
+                "orion-nebula": {
+                    title: "Tinh Vân Orion (M42)",
+                    description: `
+                        <p>Tinh vân Orion (Messier 42) là một tinh vân khuếch tán nằm trong chòm sao Lạp Hộ (Orion), một trong những tinh vân sáng nhất và dễ quan sát nhất.</p>
+                        <p><strong>Vườn ươm sao:</strong> Đây là một vùng hình thành sao đang hoạt động mạnh mẽ, chứa hàng nghìn ngôi sao trẻ, bao gồm cả cụm sao Trapezium nổi tiếng ở trung tâm.</p>
+                        <p><strong>Khoảng cách:</strong> Cách Trái Đất khoảng 1.344 năm ánh sáng, là vùng hình thành sao khối lượng lớn gần Trái Đất nhất.</p>
+                        <p>Có thể nhìn thấy bằng mắt thường như một vết mờ trong "thanh kiếm" của Orion. Quan sát qua kính thiên văn sẽ tiết lộ cấu trúc khí và bụi phức tạp, rực rỡ.</p>
+                    `
+                },
+                 "cats-eye-nebula": {
+                     title: "Tinh Vân Mắt Mèo (NGC 6543)",
+                     description: `
+                        <p>Tinh vân Mắt Mèo là một tinh vân hành tinh nằm trong chòm sao Thiên Long (Draco).</p>
+                        <p><strong>Cấu trúc phức tạp:</strong> Nổi tiếng với cấu trúc cực kỳ phức tạp gồm các lớp vỏ khí, các luồng vật chất phun ra và các nút thắt bí ẩn, cho thấy lịch sử phóng vật chất phức tạp của ngôi sao trung tâm.</p>
+                        <p><strong>Nguồn gốc:</strong> Được hình thành khi một ngôi sao giống Mặt Trời đến giai đoạn cuối đời, phóng ra các lớp khí bên ngoài. Ngôi sao trung tâm còn lại là một sao lùn trắng nóng.</p>
+                        <p>Đây là một trong những tinh vân hành tinh đầu tiên được phát hiện và nghiên cứu quang phổ.</p>
+                    `
+                 },
+                 "butterfly-nebula": {
+                     title: "Tinh Vân Cánh Bướm (NGC 6302)",
+                     description: `
+                        <p>Tinh vân Cánh Bướm là một tinh vân hành tinh lưỡng cực nằm trong chòm sao Bọ Cạp (Scorpius).</p>
+                        <p><strong>Hình dạng đặc trưng:</strong> Có cấu trúc hai thùy đối xứng giống cánh bướm, được hình thành bởi các luồng gió sao cực mạnh từ ngôi sao trung tâm.</p>
+                        <p><strong>Ngôi sao trung tâm cực nóng:</strong> Ngôi sao trung tâm của nó là một trong những ngôi sao nóng nhất được biết đến, với nhiệt độ bề mặt ước tính trên 250.000 °C, nhưng bị che khuất bởi một đĩa bụi dày đặc.</p>
+                        <p>Các "cánh bướm" thực chất là những luồng khí được nung nóng và đẩy ra với tốc độ cực cao.</p>
+                    `
+                 },
+                 "milky-way": {
+                    title: "Dải Ngân Hà - Thiên Hà Của Chúng Ta",
+                    description: `
+                        <p>Dải Ngân Hà là thiên hà xoắn ốc dạng thanh chắn chứa Hệ Mặt Trời của chúng ta.</p>
+                        <p><strong>Cấu trúc:</strong> Bao gồm một phình trung tâm, bốn nhánh xoắn ốc chính, một thanh chắn ngang qua trung tâm, và một quầng thiên hà lớn chứa vật chất tối và các cụm sao cầu.</p>
+                        <p><strong>Kích thước:</strong> Đường kính khoảng 100.000 - 180.000 năm ánh sáng, chứa từ 100 đến 400 tỷ ngôi sao.</p>
+                        <p><strong>Lỗ đen siêu khối lượng:</strong> Tại tâm Dải Ngân Hà là Sagittarius A*, một lỗ đen siêu khối lượng với khối lượng gấp khoảng 4 triệu lần Mặt Trời.</p>
+                        <p>Từ Trái Đất, chúng ta nhìn thấy Dải Ngân Hà như một dải sáng mờ vắt ngang bầu trời đêm vì chúng ta đang nhìn từ bên trong đĩa thiên hà.</p>
+                    `
+                 },
+                 "andromeda": {
+                    title: "Thiên Hà Andromeda (M31)",
+                    description: `
+                        <p>Thiên hà Tiên Nữ (Andromeda, Messier 31) là thiên hà xoắn ốc lớn gần nhất với Dải Ngân Hà và là thiên hà lớn nhất trong Nhóm Địa phương (Local Group).</p>
+                        <p><strong>Khoảng cách:</strong> Cách Trái Đất khoảng 2.5 triệu năm ánh sáng.</p>
+                        <p><strong>Va chạm trong tương lai:</strong> Andromeda đang di chuyển về phía Dải Ngân Hà với tốc độ khoảng 110 km/s. Hai thiên hà được dự đoán sẽ bắt đầu va chạm và sáp nhập trong khoảng 4.5 tỷ năm nữa, tạo thành một thiên hà elip khổng lồ mới (thường được gọi là "Milkomeda" hoặc "Milkdromeda").</p>
+                        <p>Có thể nhìn thấy bằng mắt thường dưới dạng một vệt mờ trong điều kiện trời tối, không ô nhiễm ánh sáng.</p>
+                    `
+                 },
+                 "sombrero": {
+                    title: "Thiên Hà Sombrero (M104)",
+                    description: `
+                        <p>Thiên hà Sombrero (Messier 104) là một thiên hà xoắn ốc không thanh chắn nằm trong chòm sao Xử Nữ (Virgo).</p>
+                        <p><strong>Đặc điểm nổi bật:</strong> Có một phình trung tâm cực lớn và sáng, cùng một vành đai bụi tối màu và nổi bật chạy dọc theo mặt phẳng xích đạo của thiên hà, tạo nên hình ảnh giống chiếc mũ Sombrero của Mexico.</p>
+                        <p><strong>Khoảng cách:</strong> Cách Trái Đất khoảng 31 triệu năm ánh sáng.</p>
+                        <p>Phình trung tâm lớn của nó chứa một quần thể sao già và một lỗ đen siêu khối lượng. Vành đai bụi là nơi diễn ra hoạt động hình thành sao.</p>
+                    `
+                 }
+            };
+
+            function openKhamPhaModal(itemId) {
+                const data = khamPhaModalData[itemId];
+                if (data && modalContainer && modalTitleElement && modalDescriptionElement) {
+                    modalTitleElement.textContent = data.title;
+                    modalDescriptionElement.innerHTML = data.description;
+                    modalContainer.classList.add('visible');
+                } else {
+                    console.error("Modal data not found for ID:", itemId);
+                    if (modalContainer && modalTitleElement && modalDescriptionElement) {
+                        modalTitleElement.textContent = "Lỗi";
+                        modalDescriptionElement.innerHTML = "<p>Không tìm thấy nội dung chi tiết cho mục này.</p>";
+                        modalContainer.classList.add('visible');
+                    }
+                }
+            }
+
+            function closeKhamPhaModal() {
+                if (modalContainer) {
+                    modalContainer.classList.remove('visible');
+                }
+            }
+
+            // Event listener for opening the modal (scoped to #kham-pha)
+            const khamPhaPage = document.getElementById('kham-pha');
+            if (khamPhaPage) {
+                 khamPhaPage.addEventListener('click', (event) => {
+                    const targetButton = event.target.closest('.card .btn-new');
+                    if (targetButton && targetButton.hasAttribute('data-modal-id')) {
+                        event.preventDefault();
+                        const itemId = targetButton.getAttribute('data-modal-id');
+                        openKhamPhaModal(itemId);
+                    }
+                 });
+            }
+
+            // Event listeners for closing the modal
+            if (modalCloseBtn) {
+                modalCloseBtn.addEventListener('click', closeKhamPhaModal);
+            }
+            if (modalContainer) {
+                modalContainer.addEventListener('click', (event) => {
+                    if (event.target === modalContainer) {
+                        closeKhamPhaModal();
+                    }
+                });
+            }
+            document.addEventListener('keydown', (event) => {
+                if (event.key === 'Escape' && modalContainer?.classList.contains('visible')) {
+                    closeKhamPhaModal();
+                }
+            });
+            // --- End Modal Logic ---
+
+        }); // End DOMContentLoaded
+    </script>
+</body>
+</html>
